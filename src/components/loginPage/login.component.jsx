@@ -11,6 +11,8 @@ import "../../assets/css/webflow.css"
 
 const axios = require("axios")
 const title = "Login"
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Login() {
   const navigate = useNavigate()
@@ -34,7 +36,7 @@ function Login() {
     // setLoading(true)
     axios({
       method: "post",
-      url: "/users/login",
+      url: `${siteUrl}:${serverPort}/users/login`,
       data,
     })
       .then((res) => {

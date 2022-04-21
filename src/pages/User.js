@@ -13,6 +13,8 @@ import "./User.style.css"
 
 var referralCodes = require("referral-codes")
 const axios = require("axios")
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 // ----------------------------------------------------------------------
 
@@ -94,7 +96,7 @@ export default function User() {
   const handleClose = () => setOpen(false)
   useEffect(() => {
     axios
-      .get("/users")
+      .get(`${siteUrl}:${serverPort}/users`)
       .then((res) => {
         setData(res.data)
       })
@@ -140,7 +142,7 @@ export default function User() {
     const role = newRole
     axios({
       method: "post",
-      url: "/users",
+      url: `${siteUrl}:${serverPort}/users`,
       data: {
         name,
         email,

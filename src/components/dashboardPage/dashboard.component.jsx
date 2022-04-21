@@ -22,6 +22,8 @@ import '../../assets/css/asyncnow.webflow.css'
 import '../../assets/css/webflow.css'
 
 const axios = require("axios")
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const renderTime = ({ remainingTime }) => {
     if (remainingTime === 0) {
@@ -124,7 +126,7 @@ function Dashboard(props) {
         formData.append("cta", cta);
         var configFile = {
             method: 'post',
-            url: '/upload/video',
+            url: `${siteUrl}:${serverPort}/upload/video`,
             headers: { 
               'Authorization': `Bearer ${token}`
             },

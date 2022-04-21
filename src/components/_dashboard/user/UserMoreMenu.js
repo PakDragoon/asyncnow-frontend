@@ -12,6 +12,9 @@ import { userDataRecoil } from "../../data/atom"
 import "react-confirm-alert/src/react-confirm-alert.css"
 import "./UserMoreMenu.style.css"
 
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -65,7 +68,7 @@ export default function UserMoreMenu(props) {
             label: "Yes",
             onClick: () => {
               axios
-                .delete(`/user/delete/${userId}`)
+                .delete(`${siteUrl}:${serverPort}/user/delete/${userId}`)
                 .then((res) => {
                   console.log("Result:", res)
                   sessionStorage.setItem("deleteSuccess","true")
@@ -101,7 +104,7 @@ export default function UserMoreMenu(props) {
       }
       axios({
         method: "patch",
-        url: `/user/update/${props.Id}`,
+        url: `${siteUrl}:${serverPort}/user/update/${props.Id}`,
         data,
       })
         .then((res) => {

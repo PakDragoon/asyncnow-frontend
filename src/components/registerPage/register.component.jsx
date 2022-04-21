@@ -9,6 +9,8 @@ import { set, stubFalse } from "lodash"
 const axios = require("axios")
 const title = "Register"
 const referralCodes = require("referral-codes")
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Register() {
   const navigate = useNavigate()
@@ -35,7 +37,7 @@ function Register() {
     setLoading(true)
     axios({
       method: "post",
-      url: "/users",
+      url: `${siteUrl}:${serverPort}/users`,
       data: {
         name,
         email,

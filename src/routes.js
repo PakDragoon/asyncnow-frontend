@@ -47,7 +47,7 @@ const MainRoutes = () => (
     {/** Admin Routes */}
     <Route path="/dashboardadmin" element={<ProtectedRoutes />}>
       <Route path="/dashboardadmin" element={<DashboardL />}>
-        <Route path="app" element={<DashboardApp />} />
+        <Route path="app" element={<User />} />
         <Route path="user" element={<User />} />
       </Route>
     </Route>

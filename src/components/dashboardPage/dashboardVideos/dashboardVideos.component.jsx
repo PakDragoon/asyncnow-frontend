@@ -13,6 +13,8 @@ import '../../../assets/css/webflow.css'
 
 const axios = require("axios")
 const title = 'Dashbaord | Videos'
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function DashboardVideos () {
     const navigate = useNavigate()
@@ -21,7 +23,7 @@ function DashboardVideos () {
     useEffect(() => {
         var config = {
             method: 'get',
-            url: '/tasks',
+            url: `${siteUrl}:${serverPort}/tasks`,
             headers: { 
               'Authorization': `Bearer ${token}`
             }
@@ -38,7 +40,7 @@ function DashboardVideos () {
     function handleDeleteVideo (taskId, taskLink) {
         var configS3 = {
             method: 'delete',
-            url: `/delete/s3obj/${taskLink}`,
+            url: `${siteUrl}:${serverPort}/delete/s3obj/${taskLink}`,
             headers: { 
               'Authorization': `Bearer ${token}`
             }
@@ -86,7 +88,7 @@ function DashboardVideos () {
             }
         let configPatch = {
             method: 'patch',
-            url: `/tasks/${videoId}`,
+            url: `${siteUrl}:${serverPort}/tasks/${videoId}`,
             headers: { 
               'Authorization': `Bearer ${token}`
             },

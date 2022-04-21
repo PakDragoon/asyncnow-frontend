@@ -1,13 +1,8 @@
 import React, {useState} from "react"
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from "react-helmet"
-import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from "recoil"
-import { userDataRecoil } from "../../data/atom"
-import Button from '@mui/material/Button';
-import { Icon } from '@iconify/react';
-import searchFill from '@iconify/icons-eva/search-fill';
 import { styled } from '@mui/material/styles';
-import { Box,OutlinedInput,InputAdornment } from '@mui/material';
+import { OutlinedInput } from '@mui/material';
 
 import DashboardSubTitle from "../title.component"
 import videosIcon from "../../../assets/images/focus.png"
@@ -20,6 +15,8 @@ import "../../../assets/css/webflow.css"
 
 const axios = require('axios')
 const title = "Dashboard | Main"
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   width: 240,
@@ -51,7 +48,7 @@ function DashboardMain() {
     event.preventDefault()
     let config = {
       method: 'get',
-      url: `/others/tasks/${linkToSend}`
+      url: `${siteUrl}:${serverPort}/others/tasks/${linkToSend}`
     };
     axios(config)
       .then((res) => {
@@ -74,7 +71,7 @@ function DashboardMain() {
       }
   let configPatch = {
       method: 'patch',
-      url: `/others/tasks/${videoI}`,
+      url: `${siteUrl}:${serverPort}/others/tasks/${videoI}`,
       data: updateData
     };
     axios(configPatch)

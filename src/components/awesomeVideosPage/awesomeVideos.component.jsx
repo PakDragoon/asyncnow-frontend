@@ -22,7 +22,7 @@ function AwesomeVideos(props) {
       console.log('server',serverPort)
       let config = {
         method: 'get',
-        url: `/tasks/${videoId}`,
+        url: `${siteUrl}:${serverPort}/tasks/${videoId}`,
         headers: { 
           'Authorization': `Bearer ${token}`
         }

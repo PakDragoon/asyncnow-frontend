@@ -11,6 +11,8 @@ import "../../../assets/css/webflow.css"
 
 const axios = require("axios")
 const title = "Dashboard | Insights"
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function DashboardInsights() {
   const [data, setData] = useState([])
@@ -18,7 +20,7 @@ function DashboardInsights() {
   useEffect(() => {
     var config = {
       method: 'get',
-      url: '/tasks',
+      url:`${siteUrl}:${serverPort}/tasks`,
       headers: { 
         'Authorization': `Bearer ${token}`
       }

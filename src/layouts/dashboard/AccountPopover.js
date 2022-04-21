@@ -17,6 +17,8 @@ import account from '../../_mocks_/account';
 // ----------------------------------------------------------------------
 
 const axios = require('axios');
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const MENU_OPTIONS = [
   {
@@ -56,7 +58,7 @@ export default function AccountPopover() {
     event.preventDefault();
     const config = {
       method: 'post',
-      url: '/users/logoutall',
+      url: `${siteUrl}:${serverPort}/users/logoutall`,
       headers: { 
         'Authorization': `Bearer ${token}`
       }

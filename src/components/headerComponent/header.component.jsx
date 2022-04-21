@@ -9,6 +9,8 @@ import "../../assets/css/webflow.css"
 import "./header.style.css"
 
 const axios = require("axios")
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Header() {
   const [email, setEmail] = useState("")
@@ -30,7 +32,7 @@ function Header() {
     const token = sessionStorage.getItem("token")
     const config = {
       method: "post",
-      url: "/users/logoutall",
+      url: `${siteUrl}:${serverPort}/users/logoutall`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -50,7 +52,7 @@ function Header() {
     event.preventDefault()
     const config = {
       method: "post",
-      url: "/mail",
+      url: `${siteUrl}:${serverPort}/mail`,
       headers: {
         "Content-Type": "application/json",
       },

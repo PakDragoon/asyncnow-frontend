@@ -17,6 +17,8 @@ import "../../../assets/css/webflow.css"
 
 const axios = require("axios")
 const title = "Dashboard | Settings"
+const siteUrl = process.env.REACT_APP_SITE_URL
+const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function DashboardSettings() {
   const [name, setName] = useState(sessionStorage.getItem("name"))
@@ -35,7 +37,7 @@ function DashboardSettings() {
     var data = ''
     var config = {
       method: 'get',
-      url: '/users/me',
+      url: `${siteUrl}:${serverPort}/users/me`,
       headers: { 
         'Authorization': `Bearer ${token}`
       },
@@ -64,7 +66,7 @@ function DashboardSettings() {
     }
     axios({
       method: "patch",
-      url: "/users/me",
+      url: `${siteUrl}:${serverPort}/users/me`,
       headers: { 
         'Authorization': `Bearer ${token}`
       },
