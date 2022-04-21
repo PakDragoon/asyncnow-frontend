@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react"
+import React, { useState, useEffect } from "react"
 import { Helmet } from "react-helmet"
 import { userDataRecoil } from "../../data/atom"
 import { useRecoilValue } from "recoil"
-import Overlay from "react-overlay-component";
+import Overlay from "react-overlay-component"
 
 import DashboardSubTitle from "../title.component"
 import DashboardSubText from "../subtext.component"
@@ -18,7 +18,6 @@ import "../../../assets/css/webflow.css"
 const axios = require("axios")
 const title = "Dashboard | Settings"
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function DashboardSettings() {
   const [name, setName] = useState(sessionStorage.getItem("name"))
@@ -27,32 +26,32 @@ function DashboardSettings() {
   const [nameChange, setNameChange] = useState("")
   const [emailChange, setEmailChange] = useState("")
   const [companyChange, setCompanyChange] = useState("")
-  const [isOpen, setOverlay] = useState(false);
-  const configs = { animate: true, clickDismiss: true, escapeDismiss: true };
+  const [isOpen, setOverlay] = useState(false)
+  const configs = { animate: true, clickDismiss: true, escapeDismiss: true }
   const { userToken } = useRecoilValue(userDataRecoil)
   const token = sessionStorage.getItem("token")
   const userCode = sessionStorage.getItem("code")
 
   useEffect(() => {
-    var data = ''
+    var data = ""
     var config = {
-      method: 'get',
-      url: `${siteUrl}:${serverPort}/users/me`,
-      headers: { 
-        'Authorization': `Bearer ${token}`
+      method: "get",
+      url: `${siteUrl}/users/me`,
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      data: data
-    };
+      data: data,
+    }
     axios(config)
-    .then(function (res) {
-      setName(res.data.name);
-        setEmail(res.data.email);
-        setCompany(res.data.company);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }, []);
+      .then(function (res) {
+        setName(res.data.name)
+        setEmail(res.data.email)
+        setCompany(res.data.company)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }, [])
 
   const handleUpdate = async (event) => {
     event.preventDefault()
@@ -62,15 +61,15 @@ function DashboardSettings() {
     const data = {
       name: nameChange,
       email: emailChange,
-      company: companyChange
+      company: companyChange,
     }
     axios({
       method: "patch",
-      url: `${siteUrl}:${serverPort}/users/me`,
-      headers: { 
-        'Authorization': `Bearer ${token}`
+      url: `${siteUrl}/users/me`,
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      data
+      data,
     })
       .then((res) => {
         console.log(res)
@@ -95,7 +94,14 @@ function DashboardSettings() {
             <div className="text-block-10">{name}</div>
           </div>
           <div className="div-block-47">
-            <a href="#" data-w-id="6c1ab2ed-325a-4759-0792-678146ef4f12" className="link-11" onClick={() => {setOverlay(true);}}>
+            <a
+              href="#"
+              data-w-id="6c1ab2ed-325a-4759-0792-678146ef4f12"
+              className="link-11"
+              onClick={() => {
+                setOverlay(true)
+              }}
+            >
               Update
             </a>
           </div>
@@ -108,7 +114,14 @@ function DashboardSettings() {
             <div className="text-block-10">{email}</div>
           </div>
           <div className="div-block-47">
-            <a href="#" data-w-id="509bebb8-7a5d-25a8-c0ea-51b4855e51d2" className="link-11" onClick={() => {setOverlay(true);}}>
+            <a
+              href="#"
+              data-w-id="509bebb8-7a5d-25a8-c0ea-51b4855e51d2"
+              className="link-11"
+              onClick={() => {
+                setOverlay(true)
+              }}
+            >
               Update
             </a>
           </div>
@@ -121,7 +134,14 @@ function DashboardSettings() {
             <div className="text-block-10">{company}</div>
           </div>
           <div className="div-block-47">
-            <a href="#" data-w-id="1d238b13-8207-3da3-6897-9ddf61c5267b" className="link-11" onClick={() => {setOverlay(true);}}>
+            <a
+              href="#"
+              data-w-id="1d238b13-8207-3da3-6897-9ddf61c5267b"
+              className="link-11"
+              onClick={() => {
+                setOverlay(true)
+              }}
+            >
               Update
             </a>
           </div>
@@ -134,7 +154,14 @@ function DashboardSettings() {
             <div className="text-block-10">{userCode}</div>
           </div>
           <div className="div-block-47">
-            <a href="#" data-w-id="70d5e562-7fa1-d234-68f8-7b7e440688d8" className="link-11" onClick={() => {setOverlay(true);}}>
+            <a
+              href="#"
+              data-w-id="70d5e562-7fa1-d234-68f8-7b7e440688d8"
+              className="link-11"
+              onClick={() => {
+                setOverlay(true)
+              }}
+            >
               Update
             </a>
           </div>
@@ -142,18 +169,40 @@ function DashboardSettings() {
       </div>
       <>
         <Overlay configs={configs} isOpen={isOpen}>
-          <div style={{opacity: '1'}} className="pup-up-modal">
+          <div style={{ opacity: "1" }} className="pup-up-modal">
             <div style={{}} className="pop-up-modal-content video step-one">
               <form id="loginForm" onSubmit={handleUpdate} name="loginForm" data-name="Email Form" method="get" className="form login">
-                <label htmlFor="name" className="field-label">Name</label>
+                <label htmlFor="name" className="field-label">
+                  Name
+                </label>
                 <input type="name" onChange={(e) => setNameChange(e.target.value)} className="text-field w-input" maxLength="256" name="name" data-name="name" placeholder="New Name" id="email" required="" />
-                <label htmlFor="email" className="field-label">Email</label>
+                <label htmlFor="email" className="field-label">
+                  Email
+                </label>
                 <input type="email" onChange={(e) => setEmailChange(e.target.value)} className="text-field w-input" maxLength="256" name="email" data-name="email" placeholder="New Email" id="password" required="" />
-                <label htmlFor="company" className="field-label">Company</label>
+                <label htmlFor="company" className="field-label">
+                  Company
+                </label>
                 <input type="company" onChange={(e) => setCompanyChange(e.target.value)} className="text-field w-input" maxLength="256" name="company" data-name="company" placeholder="New Company" id="password" required="" />
                 <div className="div-block-2 hero video">
-                  <input type="submit" className="button w-button" value="Save Changes" onClick={() => {setOverlay(false);}} />
-                  <a data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da" href="#" className="link-7" onClick={() => {setOverlay(false);}}>Cancel</a>
+                  <input
+                    type="submit"
+                    className="button w-button"
+                    value="Save Changes"
+                    onClick={() => {
+                      setOverlay(false)
+                    }}
+                  />
+                  <a
+                    data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
+                    href="#"
+                    className="link-7"
+                    onClick={() => {
+                      setOverlay(false)
+                    }}
+                  >
+                    Cancel
+                  </a>
                 </div>
               </form>
             </div>

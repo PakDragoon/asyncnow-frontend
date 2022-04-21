@@ -14,7 +14,6 @@ import "./User.style.css"
 var referralCodes = require("referral-codes")
 const axios = require("axios")
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 // ----------------------------------------------------------------------
 
@@ -96,18 +95,18 @@ export default function User() {
   const handleClose = () => setOpen(false)
   useEffect(() => {
     axios
-      .get(`${siteUrl}:${serverPort}/users`)
+      .get(`${siteUrl}/users`)
       .then((res) => {
         setData(res.data)
       })
       .catch((error) => {
         console.log(error)
-      }) 
-    if(sessionStorage.getItem("deleteSuccess") === "true"){
+      })
+    if (sessionStorage.getItem("deleteSuccess") === "true") {
       setDeleteSuccess(true)
       setTimeout(() => setDeleteSuccess(false), 3000)
     }
-    sessionStorage.setItem("deleteSuccess","false")
+    sessionStorage.setItem("deleteSuccess", "false")
   }, [data])
 
   const handleRequestSort = (event, property) => {
@@ -142,7 +141,7 @@ export default function User() {
     const role = newRole
     axios({
       method: "post",
-      url: `${siteUrl}:${serverPort}/users`,
+      url: `${siteUrl}/users`,
       data: {
         name,
         email,
@@ -165,14 +164,13 @@ export default function User() {
       .catch((err) => {
         console.log(err.response.data)
         const emailValid = new RegExp(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,15}/g).test(email)
-        if(!emailValid) {
+        if (!emailValid) {
           setIsValidEmail(true)
           setIsFail(false)
           setCreateSuccess(false)
           setPassStatusOne(true)
           setPassStatusTwo(true)
-        }
-        else if (password === "password") {
+        } else if (password === "password") {
           setIsValidEmail(false)
           setIsFail(false)
           setCreateSuccess(false)
@@ -255,8 +253,12 @@ export default function User() {
                     ))}
                   </TextField>
                 </form>
-                <Button variant="contained" type="submit" name="submit" size="medium" margin="normal" onClick={handleNewSubmit}>Submit</Button>
-                <Button className="modal-close-button" variant="contained" type="button" name="close" size="medium" margin="normal" onClick={handleClose}>Close</Button>
+                <Button variant="contained" type="submit" name="submit" size="medium" margin="normal" onClick={handleNewSubmit}>
+                  Submit
+                </Button>
+                <Button className="modal-close-button" variant="contained" type="button" name="close" size="medium" margin="normal" onClick={handleClose}>
+                  Close
+                </Button>
               </Typography>
               <div className={`${createSuccess ? "w-form-done" : "none"}`}>
                 <div>New user has been created.</div>

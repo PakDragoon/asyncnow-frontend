@@ -10,7 +10,6 @@ const axios = require("axios")
 const title = "Register"
 const referralCodes = require("referral-codes")
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Register() {
   const navigate = useNavigate()
@@ -37,7 +36,7 @@ function Register() {
     setLoading(true)
     axios({
       method: "post",
-      url: `${siteUrl}:${serverPort}/users`,
+      url: `${siteUrl}/users`,
       data: {
         name,
         email,
@@ -60,17 +59,16 @@ function Register() {
         navigate("/thanks", { replace: true })
       })
       .catch((err) => {
-        console.log('error',err.data)
+        console.log("error", err.data)
         const emailValid = new RegExp(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,15}/g).test(email)
-        if(!emailValid) {
+        if (!emailValid) {
           setIsValidEmail(true)
           setLoading(false)
           setFail(false)
           setSuccess(false)
           setPassStatusOne(true)
           setPassStatusTwo(true)
-        }
-        else if (password === "password") {
+        } else if (password === "password") {
           setIsValidEmail(false)
           setLoading(false)
           setFail(false)
@@ -97,7 +95,7 @@ function Register() {
   function showMsg() {
     if (loading) {
       return <p>Loading . . .</p>
-    } 
+    }
   }
   return (
     <>

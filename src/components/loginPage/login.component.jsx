@@ -12,7 +12,6 @@ import "../../assets/css/webflow.css"
 const axios = require("axios")
 const title = "Login"
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Login() {
   const navigate = useNavigate()
@@ -36,7 +35,7 @@ function Login() {
     // setLoading(true)
     axios({
       method: "post",
-      url: `${siteUrl}:${serverPort}/users/login`,
+      url: `${siteUrl}/users/login`,
       data,
     })
       .then((res) => {
@@ -60,7 +59,7 @@ function Login() {
         // setLoading(false)
         if (userR === "Admin" || userR === "Super Admin") {
           navigate("/dashboardadmin/user")
-        } else if (userR === "User" && res.data.user.status ) {
+        } else if (userR === "User" && res.data.user.status) {
           navigate("/dashboarduser/main")
         } else if (res.data.user.status === false) {
           navigate("/login")
@@ -82,12 +81,12 @@ function Login() {
         setFail(true)
         // setLoading(false)
       })
-      if(banned){
-        sessionStorage.clear()
-      } else {
-        setTimeout(() => setFail(false), 3000)
-        // setLoading(false)
-      }    
+    if (banned) {
+      sessionStorage.clear()
+    } else {
+      setTimeout(() => setFail(false), 3000)
+      // setLoading(false)
+    }
   }
   return (
     <>

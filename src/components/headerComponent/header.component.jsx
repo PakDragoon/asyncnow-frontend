@@ -10,7 +10,6 @@ import "./header.style.css"
 
 const axios = require("axios")
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function Header() {
   const [email, setEmail] = useState("")
@@ -32,7 +31,7 @@ function Header() {
     const token = sessionStorage.getItem("token")
     const config = {
       method: "post",
-      url: `${siteUrl}:${serverPort}/users/logoutall`,
+      url: `${siteUrl}/users/logoutall`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -52,7 +51,7 @@ function Header() {
     event.preventDefault()
     const config = {
       method: "post",
-      url: `${siteUrl}:${serverPort}/mail`,
+      url: `${siteUrl}/mail`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -98,7 +97,9 @@ function Header() {
               <a href="#" onClick={Logout} className="nav-link login w-nav-link">
                 Logout
               </a>
-            ) : ("")}
+            ) : (
+              ""
+            )}
             {location.pathname === "/" && !isAuthenticated ? (
               <a
                 href="#top"
@@ -111,11 +112,7 @@ function Header() {
                 Join for FREE →
               </a>
             ) : location.pathname === "/" && isAuthenticated ? (
-              <Link
-                to={`${isRole === "Admin" || isRole === "Super Admin" ? '/dashboardadmin/user' : '/dashboarduser/main'}`}
-                data-w-id="3c79f708-d66c-1e9b-7848-197101407da7"
-                className="nav-link w-nav-link"
-              >
+              <Link to={`${isRole === "Admin" || isRole === "Super Admin" ? "/dashboardadmin/user" : "/dashboarduser/main"}`} data-w-id="3c79f708-d66c-1e9b-7848-197101407da7" className="nav-link w-nav-link">
                 Dashboard →
               </Link>
             ) : location.pathname === "/thanks" ? (

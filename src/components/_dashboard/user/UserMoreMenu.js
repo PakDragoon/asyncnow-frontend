@@ -13,7 +13,6 @@ import "react-confirm-alert/src/react-confirm-alert.css"
 import "./UserMoreMenu.style.css"
 
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const style = {
   position: "absolute",
@@ -68,10 +67,10 @@ export default function UserMoreMenu(props) {
             label: "Yes",
             onClick: () => {
               axios
-                .delete(`${siteUrl}:${serverPort}/user/delete/${userId}`)
+                .delete(`${siteUrl}/user/delete/${userId}`)
                 .then((res) => {
                   console.log("Result:", res)
-                  sessionStorage.setItem("deleteSuccess","true")
+                  sessionStorage.setItem("deleteSuccess", "true")
                 })
                 .catch((error) => {
                   console.log(error)
@@ -104,7 +103,7 @@ export default function UserMoreMenu(props) {
       }
       axios({
         method: "patch",
-        url: `${siteUrl}:${serverPort}/user/update/${props.Id}`,
+        url: `${siteUrl}/user/update/${props.Id}`,
         data,
       })
         .then((res) => {

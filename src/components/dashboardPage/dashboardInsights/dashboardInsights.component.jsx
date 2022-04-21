@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from "react"
+import React, { useState, useEffect } from "react"
 import { Helmet } from "react-helmet"
 
 import videosIcon from "../../../assets/images/focus.png"
@@ -12,19 +12,18 @@ import "../../../assets/css/webflow.css"
 const axios = require("axios")
 const title = "Dashboard | Insights"
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 function DashboardInsights() {
   const [data, setData] = useState([])
-    const token = sessionStorage.getItem("token")
+  const token = sessionStorage.getItem("token")
   useEffect(() => {
     var config = {
-      method: 'get',
-      url:`${siteUrl}:${serverPort}/tasks`,
-      headers: { 
-        'Authorization': `Bearer ${token}`
-      }
-    };
+      method: "get",
+      url: `${siteUrl}/tasks`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
     axios(config)
       .then((res) => {
         setData(res.data)

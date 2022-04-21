@@ -1,42 +1,41 @@
-import { Icon } from '@iconify/react';
-import { useRef, useState } from 'react';
-import homeFill from '@iconify/icons-eva/home-fill';
-import personFill from '@iconify/icons-eva/person-fill';
-import settings2Fill from '@iconify/icons-eva/settings-2-fill';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Icon } from "@iconify/react"
+import { useRef, useState } from "react"
+import homeFill from "@iconify/icons-eva/home-fill"
+import personFill from "@iconify/icons-eva/person-fill"
+import settings2Fill from "@iconify/icons-eva/settings-2-fill"
+import { Link as RouterLink, useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { userDataRecoil } from "../../components/data/atom"
 // material
-import { alpha } from '@mui/material/styles';
-import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '@mui/material';
+import { alpha } from "@mui/material/styles"
+import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from "@mui/material"
 // components
-import MenuPopover from '../../components/MenuPopover';
+import MenuPopover from "../../components/MenuPopover"
 //
-import account from '../../_mocks_/account';
+import account from "../../_mocks_/account"
 
 // ----------------------------------------------------------------------
 
-const axios = require('axios');
+const axios = require("axios")
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
+    label: "Home",
     icon: homeFill,
-    linkTo: '/'
+    linkTo: "/",
   },
   {
-    label: 'Profile',
+    label: "Profile",
     icon: personFill,
-    linkTo: '#'
+    linkTo: "#",
   },
   {
-    label: 'Settings',
+    label: "Settings",
     icon: settings2Fill,
-    linkTo: '#'
-  }
-];
+    linkTo: "#",
+  },
+]
 
 // ----------------------------------------------------------------------
 
@@ -45,33 +44,33 @@ export default function AccountPopover() {
   const adminName = sessionStorage.getItem("name")
   const token = sessionStorage.getItem("token")
   const adminEmail = sessionStorage.getItem("email")
-  const anchorRef = useRef(null);
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null)
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
   const handleOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   const Logout = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     const config = {
-      method: 'post',
-      url: `${siteUrl}:${serverPort}/users/logoutall`,
-      headers: { 
-        'Authorization': `Bearer ${token}`
-      }
-    };
+      method: "post",
+      url: `${siteUrl}/users/logoutall`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
     axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-      sessionStorage.clear()
-      navigate('/', { replace: true })
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .then(function (response) {
+        console.log(JSON.stringify(response.data))
+        sessionStorage.clear()
+        navigate("/", { replace: true })
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   }
 
   return (
@@ -84,32 +83,27 @@ export default function AccountPopover() {
           width: 44,
           height: 44,
           ...(open && {
-            '&:before': {
+            "&:before": {
               zIndex: 1,
               content: "''",
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72)
-            }
-          })
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              position: "absolute",
+              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+            },
+          }),
         }}
       >
         <Avatar src={account.photoURL} alt="photoURL" />
       </IconButton>
 
-      <MenuPopover
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorRef.current}
-        sx={{ width: 220 }}
-      >
+      <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
             {adminName}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
             {adminEmail}
           </Typography>
         </Box>
@@ -117,20 +111,14 @@ export default function AccountPopover() {
         <Divider sx={{ my: 1 }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem
-            key={option.label}
-            to={option.linkTo}
-            component={RouterLink}
-            onClick={handleClose}
-            sx={{ typography: 'body2', py: 1, px: 2.5 }}
-          >
+          <MenuItem key={option.label} to={option.linkTo} component={RouterLink} onClick={handleClose} sx={{ typography: "body2", py: 1, px: 2.5 }}>
             <Box
               component={Icon}
               icon={option.icon}
               sx={{
                 mr: 2,
                 width: 24,
-                height: 24
+                height: 24,
               }}
             />
 
@@ -145,5 +133,5 @@ export default function AccountPopover() {
         </Box>
       </MenuPopover>
     </>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-import React, {useState} from "react"
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet"
-import { styled } from '@mui/material/styles';
-import { OutlinedInput } from '@mui/material';
+import { styled } from "@mui/material/styles"
+import { OutlinedInput } from "@mui/material"
 
 import DashboardSubTitle from "../title.component"
 import videosIcon from "../../../assets/images/focus.png"
@@ -13,43 +13,42 @@ import "../../../assets/css/normalize.css"
 import "../../../assets/css/asyncnow.webflow.css"
 import "../../../assets/css/webflow.css"
 
-const axios = require('axios')
+const axios = require("axios")
 const title = "Dashboard | Main"
 const siteUrl = process.env.REACT_APP_SITE_URL
-const serverPort = process.env.REACT_APP_SERVER_PORT
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   width: 240,
   height: 37.5,
-  transition: theme.transitions.create(['box-shadow', 'width'], {
+  transition: theme.transitions.create(["box-shadow", "width"], {
     easing: theme.transitions.easing.easeInOut,
-    duration: theme.transitions.duration.shorter
+    duration: theme.transitions.duration.shorter,
   }),
-  '&.Mui-focused': { width: 320 },
-  '& fieldset': {
+  "&.Mui-focused": { width: 320 },
+  "& fieldset": {
     borderWidth: `1px !important`,
-    borderColor: `${theme.palette.grey[500_32]} !important`
-  }
-}));
+    borderColor: `${theme.palette.grey[500_32]} !important`,
+  },
+}))
 
 function DashboardMain() {
   // const { userId, userName, userCompany, userRole, userEmail } = useRecoilValue(userDataRecoil)
   const userName = sessionStorage.getItem("name")
   const navigate = useNavigate()
-  const [linkToSend, setLinkToSend] = useState('')
-  const [description, setDescription] = useState('')
-  const [createdAt, setCreatedAt] = useState('')
-  const [videoId, setVideoId] = useState('')
-  const [videoViews, setVideoViews] = useState('')
-  const [videoClicks, setVideoClicks] = useState('')
+  const [linkToSend, setLinkToSend] = useState("")
+  const [description, setDescription] = useState("")
+  const [createdAt, setCreatedAt] = useState("")
+  const [videoId, setVideoId] = useState("")
+  const [videoViews, setVideoViews] = useState("")
+  const [videoClicks, setVideoClicks] = useState("")
   const [isData, setIsData] = useState(false)
 
   const handleSearch = async (event) => {
     event.preventDefault()
     let config = {
-      method: 'get',
-      url: `${siteUrl}:${serverPort}/others/tasks/${linkToSend}`
-    };
+      method: "get",
+      url: `${siteUrl}/others/tasks/${linkToSend}`,
+    }
     axios(config)
       .then((res) => {
         setDescription(res.data.description)
@@ -64,24 +63,23 @@ function DashboardMain() {
       })
   }
 
-  function UpdateVideoViews (videoI, videoV, videoC) {
+  function UpdateVideoViews(videoI, videoV, videoC) {
     const updateData = {
       views: videoV + 1,
-      clicks: videoC + 1
-      }
-  let configPatch = {
-      method: 'patch',
-      url: `${siteUrl}:${serverPort}/others/tasks/${videoI}`,
-      data: updateData
-    };
+      clicks: videoC + 1,
+    }
+    let configPatch = {
+      method: "patch",
+      url: `${siteUrl}/others/tasks/${videoI}`,
+      data: updateData,
+    }
     axios(configPatch)
-      .then((res) => {
-      })
+      .then((res) => {})
       .catch((error) => {
         console.log(error)
       })
     navigate("/awesome")
-}
+  }
 
   return (
     <>
