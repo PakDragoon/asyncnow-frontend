@@ -1,0 +1,46 @@
+.dashboard-nav {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.nav-link-3 {
+  margin-top: 5 px;
+  margin-bottom: 5 px;
+  padding-top: 15 px;
+  padding-right: 0 px;
+  padding-bottom: 15 px;
+  font-family: Poppins, sans-serif;
+  color: #000;
+  font-weight: 600;
+}
+.w-nav-link {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  text-decoration: none;
+  color: #fff;
+  padding: 20 px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+.b-nav-link {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  text-decoration: none;
+  color: #222222;
+  padding: 20 px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+.navbbar-app {
+  height: 80 px;
+  border-bottom: 2 px solid #fbf7f3;
+  background-color: transparent;
+  box-shadow: 4px 4px 6px 1px #fbf7f3;
+}
+.none {
+  display: none;
+}

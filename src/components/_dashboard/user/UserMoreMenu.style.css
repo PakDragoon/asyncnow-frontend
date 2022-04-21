@@ -1,0 +1,7 @@
+.modal-close-button {
+    margin-left: 1rem;
+    background-color: grey;
+}
+.modal-close-button:hover {
+    background-color: lightgray;
+}

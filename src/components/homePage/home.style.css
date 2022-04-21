@@ -1,0 +1,8 @@
+.bg-home-color {
+    background-color: #454ade !important;
+}
+.bg-home-color:hover {
+    margin: 2px -2px -2px 2px;
+    background-color: #1f24b0 !important;
+    box-shadow: 4px 4px 6px 1px #7a7ee8;
+}
