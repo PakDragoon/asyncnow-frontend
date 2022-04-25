@@ -28,7 +28,6 @@ const renderTime = ({ remainingTime }) => {
   if (remainingTime === 0) {
     return <div className="timer">Starting now</div>
   }
-
   return (
     <div className="timer">
       <div className="text">{`${remainingTime === 3 ? "Starting in ." : remainingTime === 2 ? "Starting in . ." : remainingTime === 1 ? "Starting in . . ." : ""}`}</div>
@@ -47,18 +46,19 @@ function Dashboard(props) {
   const [description, setDescription] = useState("")
   const [cta, setCTA] = useState("")
   const [fileData, setFileData] = useState()
+  const [upload, setUpload] = useState(false)
   const [firstClick, setFirstClick] = useState(false)
   const [countdownStart, setCountdownStart] = useState(false)
   const { status, previewStream, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ video: true })
-
+  const OverlayZero = useRef(null)
+  const OverlayOne = useRef(null)
+  const OverlayTwo = useRef(null)
+  const OverlayThree = useRef(null)
   const configs = {
     animate: true,
     clickDismiss: true,
     escapeDismiss: true,
   }
-  const OverlayOne = useRef(null)
-  const OverlayTwo = useRef(null)
-  const OverlayThree = useRef(null)
 
   useEffect(() => {
     if (videoRef.current && previewStream) {
@@ -77,9 +77,17 @@ function Dashboard(props) {
   function blobToFile(theBlob, fileName) {
     return new File([theBlob], fileName, { lastModified: new Date().getTime(), type: theBlob.type })
   }
+  
+  function handleClickZero() {
+    OverlayZero.current.style.display = "none"
+    OverlayOne.current.style.display = "block"
+    OverlayTwo.current.style.display = "none"
+    OverlayThree.current.style.display = "none"
+  }
 
   async function handleClickOne() {
     if (firstClick) {
+      OverlayZero.current.style.display = "none"
       OverlayOne.current.style.display = "none"
       OverlayTwo.current.style.display = "block"
       OverlayThree.current.style.display = "none"
@@ -103,15 +111,17 @@ function Dashboard(props) {
   }
 
   function handleClickTwo() {
-    OverlayThree.current.style.display = "block"
-    OverlayTwo.current.style.display = "none"
+    OverlayZero.current.style.display = "none"
     OverlayOne.current.style.display = "none"
+    OverlayTwo.current.style.display = "none"
+    OverlayThree.current.style.display = "block"
   }
 
   function handleClickThree() {
-    OverlayThree.current.style.display = "none"
+    OverlayZero.current.style.display = "block"
+    OverlayOne.current.style.display = "none"
     OverlayTwo.current.style.display = "none"
-    OverlayOne.current.style.display = "block"
+    OverlayThree.current.style.display = "none"
   }
 
   const handleSubmitVideo = async (event) => {
@@ -137,6 +147,7 @@ function Dashboard(props) {
         console.log(err.res.data)
       })
     handleClickThree()
+    setUpload(false)
     setOverlay(false)
     setDescription("")
     setCTA("")
@@ -223,8 +234,49 @@ function Dashboard(props) {
       <div>
         <Overlay configs={configs} isOpen={isOpen}>
           <div style={{ opacity: "1" }} className="pup-up-modal">
+            {/* zero */}
+          <div style={{}} ref={OverlayZero} className="pop-up-modal-content video step-one">
+              <div className="div-block-52">
+                <h1 className="heading-4 video">
+                  Start recording
+                  <span className="text-span-13" />
+                  <br />
+                </h1>
+                <div className="text-block-14">(1/3)</div>
+              </div>
+              <div className="div-block-50">
+                <div className="text-block-10 middle video">
+                  <div style={{marginBottom:"1.25rem"}}>
+                    <a  href="#" className="button w-button" 
+                      onClick={() => {
+                        handleClickTwo()
+                        setUpload(true)
+                      }}>Upload</a>
+                  </div>
+                  ---------- OR ----------
+                  <div style={{marginTop:"1.25rem"}}>
+                    <a href="#" className="button w-button" onClick={handleClickZero}>Record</a>
+                  </div>
+                </div>
+              </div>
+              <div className="div-block-2 hero video">
+                <a style={{'visibility': 'hidden'}} href="#" className="button w-button"></a>
+                <a
+                  data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
+                  href="#"
+                  className="link-7"
+                  onClick={() => {
+                    setOverlay(false)
+                    handleClickThree()
+                    setFirstClick(false)
+                  }}
+                >
+                  Cancel
+                </a>
+              </div>
+            </div>
             {/* //1st */}
-            <div style={{}} ref={OverlayOne} className="pop-up-modal-content video step-one">
+            <div style={{ display: "none" }} ref={OverlayOne} className="pop-up-modal-content video step-one">
               <div className="div-block-52">
                 <h1 className="heading-4 video">
                   Start recording
@@ -253,12 +305,12 @@ function Dashboard(props) {
                       </CountdownCircleTimer>
                     </div>
                   ) : (
-                    `Click 'Record Now' to start. Remember you have 60 seconds. And don't forget to smile 😀`
+                    `Click 'Record Now' to start. Rremember you have 60 seconds. And don't forget to smile 😀`
                   )}
                 </div>
               </div>
               <div className="div-block-2 hero video">
-                <a id="start" data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332d8" href="#" className="button w-button" onClick={handleClickOne}>{`${firstClick ? "Stop Recording" : "Record Now"}`}</a>
+                <a  data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332d8" href="#" className="button w-button" onClick={handleClickOne}>{`${firstClick ? "Stop Recording" : "Record Now"}`}</a>
                 <a
                   data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
                   href="#"
@@ -329,8 +381,11 @@ function Dashboard(props) {
                     CTA (OPTIONAL)
                   </label>
                   <input type="text" className="text-field w-input" onChange={(e) => setCTA(e.target.value)} maxLength={256} name="CTA" data-name="CTA" placeholder="/@alovelace/save-10%" id="CTA" />
-                  {/* <label htmlFor="CTA" className="field-label">File</label>
-                        <input type="file" className="text-field w-input" onChange={(e) => setFileData(e.target.files[0])} name="video" data-name="video" placeholder="Choose File" id="video" /> */}
+                  {upload ? 
+                    <>
+                    <label htmlFor="CTA" className="field-label">Upload File</label>
+                    <input type="file" className="text-field w-input" onChange={(e) => setFileData(e.target.files[0])} name="video" data-name="video" placeholder="Choose File" id="video" />
+                    </> : '' }
                   {/* <label htmlFor="Title" className="field-label">VIDEO&nbsp;LINK</label> */}
                   {/* <div className="div-block-51">
                         <a href="#" className="link-block-2 small w-inline-block" onClick={() =>  navigator.clipboard.writeText(`${videoLink}`)}>
@@ -352,6 +407,7 @@ function Dashboard(props) {
                         setDescription("")
                         setCTA("")
                         setFileData()
+                        setUpload(false)
                       }}
                     >
                       Cancel
@@ -359,7 +415,6 @@ function Dashboard(props) {
                   </div>
                 </form>
               </div>
-              <p>{status}</p>
             </div>
           </div>
         </Overlay>

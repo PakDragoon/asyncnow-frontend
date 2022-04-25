@@ -81,23 +81,23 @@ function DashboardVideos() {
     })
   }
   function UpdateVideoViews(videoId, videoViews, videoClicks) {
-    const updateData = {
-      views: videoViews + 1,
-      clicks: videoClicks + 1,
-    }
-    let configPatch = {
-      method: "patch",
-      url: `${siteUrl}/tasks/${videoId}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: updateData,
-    }
-    axios(configPatch)
-      .then((res) => {})
-      .catch((error) => {
-        console.log(error)
-      })
+    // const updateData = {
+    //   views: videoViews + 1,
+    //   clicks: videoClicks + 1,
+    // }
+    // let configPatch = {
+    //   method: "patch",
+    //   url: `${siteUrl}/tasks/${videoId}`,
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    //   data: updateData,
+    // }
+    // axios(configPatch)
+    //   .then((res) => {})
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
     navigate("/awesome")
   }
   return (
