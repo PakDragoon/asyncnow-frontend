@@ -130,16 +130,15 @@ function DashboardVideos() {
                 </div>
               </div>
               <div className="div-block-47">
-                <a
-                  href="#"
-                  onClick={() => {
-                    sessionStorage.setItem("videoId", row._id)
-                    UpdateVideoViews(row._id, row.views, row.clicks)
-                  }}
+                <Link
+                  to={`/awesome/${row.link}`}
+                  // onClick={() => {
+                  //   sessionStorage.setItem("videoId", row._id)
+                  // }}
                   className="link-11"
                 >
                   Watch
-                </a>
+                </Link>
                 <div className="div-block-48">
                   <div className="text-block-10">|</div>
                 </div>

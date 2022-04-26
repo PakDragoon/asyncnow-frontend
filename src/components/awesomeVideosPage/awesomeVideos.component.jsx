@@ -40,13 +40,15 @@ function AwesomeVideos(props) {
 
   useEffect(() => {
     function GetVideoData() {
+      setLink(linkv)
       let config = {
         method: "get",
-        url: `${siteUrl}/others/tasks/${linkv}`
+        url: `${siteUrl}/others/tasks/${link}`
       }
       axios(config)
         .then((res) => {
           setVideoTitle(res.data.description)
+          UpdateVideoViews(res.data._id, res.data.views, res.data.clicks)
         })
         .catch((error) => {
           console.log(error)
@@ -66,24 +68,7 @@ function AwesomeVideos(props) {
       data: updateData,
     }
     axios(configPatch)
-      .then((res) => {console.log("views increased")})
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  const handleSearch = async (event) => {
-    event.preventDefault()
-    setLink(linkToSend)
-    let config = {
-      method: "get",
-      url: `${siteUrl}/others/tasks/${linkToSend}`,
-    }
-    axios(config)
-      .then((res) => {
-        setVideoTitle(res.data.description)
-        UpdateVideoViews(res.data._id, res.data.views, res.data.clicks)
-      })
+      .then((res) => {})
       .catch((error) => {
         console.log(error)
       })
@@ -93,10 +78,10 @@ function AwesomeVideos(props) {
   return (
     <div className="container-3 w-container">
       <div className="div-block-36 video">
-        <h2 className="heading-8 contacts video">{linkv}</h2>
+        <h2 className="heading-8 contacts video">{link}</h2>
         <div className="text-block-10 middle short">Hey, Ada Lovelace from Google Inc. sent you a video 🍿</div>
         <div className="div-block-53v">
-          <video src={`${siteUrl}/play/video/${linkv}`} width="100%" height="100%" controls autoPlay></video>
+          <video src={`${siteUrl}/play/video/${link}`} width="100%" height="100%" controls autoPlay></video>
         </div>
         <div className="div-block-41 short">
           <div className="div-block-42">
