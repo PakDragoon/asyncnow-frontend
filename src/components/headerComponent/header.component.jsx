@@ -128,8 +128,8 @@ function Header() {
                 Back to Login →
               </Link>
             ) : location.pathname === "/awesome" ? (
-              <Link to="/dashboarduser/videos" class="nav-link-3 b-nav-link">
-                &#8592; Back to videos
+              <Link to={isAuthenticated ? '/dashboarduser/videos' : '/'} class="nav-link-3 b-nav-link">
+                &#8592;{isAuthenticated ? ' Back to videos' : ' Back to Home'}
               </Link>
             ) : location.pathname.match(/^.*dashboard.*$/) && location.pathname !== "/dashboard/user" ? (
               <Link to="/" onClick={Logout} className="nav-link-3 b-nav-link">
