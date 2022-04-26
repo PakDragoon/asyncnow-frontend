@@ -70,7 +70,7 @@ const MainRoutes = () => (
     <Route path="paypal" element={<PaypalCheckoutComponent title="Paypal Checkout" />} />
     <Route path="order" element={<OrderConfirmationComponent title="Order Confirmation" />} />
     <Route path="thanks" element={<Thanks title="Thanks" />} />
-    <Route path="awesome" element={<AwesomeVideo title="Awesome" />} />
+    <Route path="awesome/:linkv" element={<AwesomeVideo title="Awesome" />} />
     <Route path="*" element={<Error title="404" />} />
   </Routes>
 )

@@ -127,7 +127,7 @@ function Header() {
               <Link to="/login" data-w-id="3c79f708-d66c-1e9b-7848-197101407da7" className="nav-link w-nav-link">
                 Back to Login →
               </Link>
-            ) : location.pathname === "/awesome" ? (
+            ) : location.pathname.match(/^.*awesome.*$/) ? ( 
               <Link to={isAuthenticated ? '/dashboarduser/videos' : '/'} class="nav-link-3 b-nav-link">
                 &#8592;{isAuthenticated ? ' Back to videos' : ' Back to Home'}
               </Link>

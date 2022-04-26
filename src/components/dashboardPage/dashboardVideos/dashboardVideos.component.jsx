@@ -149,7 +149,7 @@ function DashboardVideos() {
                 <div className="div-block-48">
                   <div className="text-block-10">|</div>
                 </div>
-                <a href="#" data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8" className="link-11" onClick={() => navigator.clipboard.writeText(`${row.link}`)}>
+                <a href="#" data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8" className="link-11" onClick={() => navigator.clipboard.writeText(`http://localhost:3000/awesome/${row.link}`)}>
                   Copy Link
                 </a>
               </div>

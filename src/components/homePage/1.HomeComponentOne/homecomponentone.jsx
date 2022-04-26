@@ -11,6 +11,7 @@ import mainSmallImage6 from '../../../assets/images/revolut_brand_logo.svg'
 
 function HomeComponentOne() {
   const isLogin = sessionStorage.getItem("isAuthenticated")
+  const linkv = '1650629746730-906104976-abc.mp4'
   return (
     <div className="section-white wf-section">
       <Container className="hero-container w-container">
@@ -20,7 +21,7 @@ function HomeComponentOne() {
             <div className="text-block-2">Simple video messaging made for sales and marketing teams who want to better engage leads and clients.</div>
             <div className="div-block-2 hero">
               <a data-w-id="ace441d6-3eec-823d-c13d-306c9ae6ad33" href="#" className={`${isLogin ? 'w-condition-invisible' : 'button w-button bg-home-color'}`}>Join for FREE →</a>
-              <Link to="/awesome" data-w-id="66fc2f41-5935-02f1-a35d-2bab6367ba82" className="button transparent w-button">Watch Videos</Link>
+              <Link to={`/awesome/${linkv}`} data-w-id="66fc2f41-5935-02f1-a35d-2bab6367ba82" className="button transparent w-button">Watch Videos</Link>
             </div>
           </Col>
           <Col sm={12} className="column-16 w-col w-col-6 w-col-12">
