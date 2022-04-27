@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Container, Row, Col } from 'react-bootstrap';
 
 import mainPageImage from '../../../assets/images/laura-adai-enkfbbb9yf8-unsplash-2.jpg'
@@ -20,7 +20,7 @@ function HomeComponentOne() {
             <div className="text-block-2">Simple video messaging made for sales and marketing teams who want to better engage leads and clients.</div>
             <div className="div-block-2 hero">
               <a data-w-id="ace441d6-3eec-823d-c13d-306c9ae6ad33" href="#" className={`${isLogin ? 'w-condition-invisible' : 'button w-button bg-home-color'}`}>Join for FREE →</a>
-              <Link to="/awesome/1650629746730-906104976-abc.mp4" data-w-id="66fc2f41-5935-02f1-a35d-2bab6367ba82" className="button transparent w-button">Watch Videos</Link>
+              <Link to="/awesome/1650629746730-906104976-abc.mp4" data-w-id="66fc2f41-5935-02f1-a35d-2bab6367ba82" className="button transparent w-button">Watch Demo</Link>
             </div>
           </Col>
           <Col sm={12} className="column-16 w-col w-col-6 w-col-12">

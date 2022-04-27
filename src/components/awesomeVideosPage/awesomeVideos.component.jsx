@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import PageTitle from "../pageTitlesComponent/pageTitles.component"
 
@@ -12,31 +13,8 @@ const siteUrl = process.env.REACT_APP_SITE_URL
 function AwesomeVideos(props) {
   let { linkv } = useParams()
   const [link, setLink] = useState("")
-  const [linkToSend, setLinkToSend] = useState("")
   const [videoTitle, setVideoTitle] = useState("")
-  const videoId = sessionStorage.getItem("videoId")
-  const token = sessionStorage.getItem("token")
-
-  // useEffect(() => {
-  //   function GetVideoData() {
-  //     let config = {
-  //       method: "get",
-  //       url: `${siteUrl}/tasks/${videoId}`,
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     }
-  //     axios(config)
-  //       .then((res) => {
-  //         setVideoTitle(res.data.description)
-  //         setLink(res.data.link)
-  //       })
-  //       .catch((error) => {
-  //         console.log(error)
-  //       })
-  //   }
-  //   GetVideoData()
-  // }, [videoId])
+  const isAuthenticated = sessionStorage.getItem("isAuthenticated")
 
   useEffect(() => {
     function GetVideoData() {
@@ -48,14 +26,17 @@ function AwesomeVideos(props) {
       axios(config)
         .then((res) => {
           setVideoTitle(res.data.description)
-          UpdateVideoViews(res.data._id, res.data.views, res.data.clicks)
+          if(!isAuthenticated){
+            UpdateVideoViews(res.data._id, res.data.views, res.data.clicks)
+            console.log('function ran')
+          }
         })
         .catch((error) => {
           console.log(error)
         })
     }
     GetVideoData()
-  }, [linkv])
+  }, [link])
 
   function UpdateVideoViews(videoI, videoV, videoC) {
     const updateData = {
@@ -68,7 +49,7 @@ function AwesomeVideos(props) {
       data: updateData,
     }
     axios(configPatch)
-      .then((res) => {})
+      .then((res) => {console.log('function response')})
       .catch((error) => {
         console.log(error)
       })
@@ -78,7 +59,7 @@ function AwesomeVideos(props) {
   return (
     <div className="container-3 w-container">
       <div className="div-block-36 video">
-        <h2 className="heading-8 contacts video">{link}</h2>
+        <h2 className="heading-8 contacts video">{videoTitle}</h2>
         <div className="text-block-10 middle short">Hey, Ada Lovelace from Google Inc. sent you a video 🍿</div>
         <div className="div-block-53v">
           <video src={`${siteUrl}/play/video/${link}`} width="100%" height="100%" controls autoPlay></video>
@@ -88,9 +69,9 @@ function AwesomeVideos(props) {
             <div className="text-block-10 short">Learn more, visit:</div>
           </div>
           <div className="div-block-47">
-            <a to="/" data-w-id="6c1ab2ed-325a-4759-0792-678146ef4f12" className="link-11">
+            <Link to="/" data-w-id="6c1ab2ed-325a-4759-0792-678146ef4f12" className="link-11">
               www.asyncnow.com/learn-more
-            </a>
+            </Link>
           </div>
         </div>
       </div>

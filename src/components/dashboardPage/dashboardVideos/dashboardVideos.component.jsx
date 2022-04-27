@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Helmet } from "react-helmet"
 import { confirmAlert } from "react-confirm-alert"
 
@@ -16,7 +16,6 @@ const title = "Dashbaord | Videos"
 const siteUrl = process.env.REACT_APP_SITE_URL
 
 function DashboardVideos() {
-  const navigate = useNavigate()
   const [data, setData] = useState([])
   const token = sessionStorage.getItem("token")
   useEffect(() => {
@@ -80,26 +79,6 @@ function DashboardVideos() {
       ],
     })
   }
-  function UpdateVideoViews(videoId, videoViews, videoClicks) {
-    // const updateData = {
-    //   views: videoViews + 1,
-    //   clicks: videoClicks + 1,
-    // }
-    // let configPatch = {
-    //   method: "patch",
-    //   url: `${siteUrl}/tasks/${videoId}`,
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    //   data: updateData,
-    // }
-    // axios(configPatch)
-    //   .then((res) => {})
-    //   .catch((error) => {
-    //     console.log(error)
-    //   })
-    navigate("/awesome")
-  }
   return (
     <>
       <Helmet>
@@ -132,9 +111,6 @@ function DashboardVideos() {
               <div className="div-block-47">
                 <Link
                   to={`/awesome/${row.link}`}
-                  // onClick={() => {
-                  //   sessionStorage.setItem("videoId", row._id)
-                  // }}
                   className="link-11"
                 >
                   Watch
