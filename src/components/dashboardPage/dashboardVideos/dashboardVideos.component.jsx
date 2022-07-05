@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Helmet } from "react-helmet"
 import { confirmAlert } from "react-confirm-alert"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { successNotification, failedNotification } from "../../../utils/notifications"
 
 import videosIcon from "../../../assets/images/focus.png"
 import DashboardSubTitle from "../title.component"
@@ -45,7 +48,7 @@ function DashboardVideos() {
     }
     var config = {
       method: "delete",
-      url: `/delete/tasks/${taskId}`,
+      url: `${siteUrl}/delete/tasks/${taskId}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -81,6 +84,7 @@ function DashboardVideos() {
   }
   return (
     <>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -124,7 +128,7 @@ function DashboardVideos() {
                 <div className="div-block-48">
                   <div className="text-block-10">|</div>
                 </div>
-                <a href="#" data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8" className="link-11" onClick={() => navigator.clipboard.writeText(`http://localhost:3000/awesome/${row.link}`)}>
+                <a href="#" data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8" className="link-11" onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/awesome/${row.link}`);successNotification("Link Copied!")}}>
                   Copy Link
                 </a>
               </div>

@@ -2559,7 +2559,7 @@ border: 2px solid #454ade !important;
   top: 0%;
   right: 0%;
   bottom: 0%;
-  z-index: 99999;
+  z-index: 3;
   display: block;
   margin: auto;
   -webkit-box-pack: center;
@@ -2594,7 +2594,7 @@ border: 2px solid #454ade !important;
 }
 
 .pup-up-modal.edit.name {
-  z-index: 9999;
+  z-index: 2;
   display: none;
   background-color: #fff;
   opacity: 1;
@@ -2645,7 +2645,7 @@ border: 2px solid #454ade !important;
   bottom: 0%;
   display: block;
   max-height: 340px;
-  max-width: 450px;
+  max-width: 460px;
   min-height: 0px;
   margin: auto;
   padding: 20px;
@@ -2680,7 +2680,7 @@ border: 2px solid #454ade !important;
 }
 
 .pop-up-modal-content.edit.name {
-  z-index: 100;
+  z-index: 1;
   max-height: 350px;
   opacity: 1;
 }
@@ -2720,7 +2720,7 @@ border: 2px solid #454ade !important;
 
 .pop-up-modal-content.video.step-one {
   display: block;
-  max-height: 450px;
+  max-height: 460px;
   padding-top: 20px;
 }
 
@@ -3580,7 +3580,7 @@ border: 2px solid #454ade !important;
   display: flex;
   height: 300px;
   margin-top: -10px;
-  margin-bottom: 15px;
+  margin-bottom: 3px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;

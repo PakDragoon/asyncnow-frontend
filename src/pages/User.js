@@ -10,6 +10,7 @@ import Scrollbar from "../components/Scrollbar"
 import SearchNotFound from "../components/SearchNotFound"
 import { UserListHead, UserListToolbar, UserMoreMenu } from "../components/_dashboard/user"
 import "./User.style.css"
+import roundToNearestMinutes from "date-fns/roundToNearestMinutes"
 
 var referralCodes = require("referral-codes")
 const axios = require("axios")
@@ -88,6 +89,7 @@ export default function User() {
   const [createSuccess, setCreateSuccess] = useState(false)
   const [isFail, setIsFail] = useState(false)
   const [isValidEmail, setIsValidEmail] = useState(false)
+  const [nameError, setNameError] = useState(false)
   const [passStatusOne, setPassStatusOne] = useState(true)
   const [passStatusTwo, setPassStatusTwo] = useState(true)
   const [data, setData] = useState([])
@@ -118,7 +120,7 @@ export default function User() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       console.log(data)
-      const newSelecteds = data.map((n) => n.name)
+      const newSelecteds = data.map((n) => n.email)
       setSelected(newSelecteds)
       return
     }
@@ -127,6 +129,12 @@ export default function User() {
 
   const handleNewSubmit = async (event) => {
     event.preventDefault()
+    const nameValidation = new RegExp(/^[A-Za-z]+$/).test(newName)
+    if (!nameValidation) {
+      setNameError(true)
+      setTimeout(() => setNameError(false), 3000)
+      return
+    }
     const codeObj = referralCodes.generate({
       count: 1,
       length: 6,
@@ -153,13 +161,21 @@ export default function User() {
     })
       .then((res) => {
         console.log(res)
-        setCreateSuccess(true)
-        setTimeout(() => setCreateSuccess(false), 3000)
         setIsValidEmail(false)
         setIsFail(false)
         setCreateSuccess(false)
         setPassStatusOne(true)
         setPassStatusTwo(true)
+        setNewName("")
+        setNewEmail("")
+        setNewCompany("")
+        setNewPassword("")
+        setNewRole("")
+        setCreateSuccess(true)
+        setTimeout(() => {
+          setCreateSuccess(false)
+          setOpen(false)
+        }, 3000)
       })
       .catch((err) => {
         console.log(err.response.data)
@@ -190,13 +206,18 @@ export default function User() {
           setPassStatusTwo(true)
         }
       })
+    setNewName("")
+    setNewEmail("")
+    setNewCompany("")
+    setNewPassword("")
+    setNewRole("")
   }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name)
+  const handleClick = (event, email) => {
+    const selectedIndex = selected.indexOf(email)
     let newSelected = []
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name)
+      newSelected = newSelected.concat(selected, email)
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1))
     } else if (selectedIndex === selected.length - 1) {
@@ -225,7 +246,7 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0
 
   return (
-    <Page title="User | Minimal-UI">
+    <Page title="Dashboard | Asyncnow">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -256,12 +277,30 @@ export default function User() {
                 <Button variant="contained" type="submit" name="submit" size="medium" margin="normal" onClick={handleNewSubmit}>
                   Submit
                 </Button>
-                <Button className="modal-close-button" variant="contained" type="button" name="close" size="medium" margin="normal" onClick={handleClose}>
+                <Button
+                  className="modal-close-button"
+                  variant="contained"
+                  type="button"
+                  name="close"
+                  size="medium"
+                  margin="normal"
+                  onClick={() => {
+                    setOpen(false)
+                    setNewName("")
+                    setNewEmail("")
+                    setNewCompany("")
+                    setNewPassword("")
+                    setNewRole("")
+                  }}
+                >
                   Close
                 </Button>
               </Typography>
               <div className={`${createSuccess ? "w-form-done" : "none"}`}>
                 <div>New user has been created.</div>
+              </div>
+              <div className={`${nameError ? "w-form-fail" : "none"}`}>
+                <div>Name must be consist of alphabets only.</div>
               </div>
               <div className={`${isFail ? "w-form-fail" : "none"}`}>
                 <div>This email has already registered.</div>
@@ -286,11 +325,11 @@ export default function User() {
                 <UserListHead order={order} orderBy={orderBy} headLabel={TABLE_HEAD} rowCount={data.length} numSelected={selected.length} onRequestSort={handleRequestSort} onSelectAllClick={handleSelectAllClick} />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const isItemSelected = selected.indexOf(row.name) !== -1
+                    const isItemSelected = selected.indexOf(row.email) !== -1
                     return (
-                      <TableRow key={row.uniqueId} hover tabIndex={-1} role="checkbox" selected={isItemSelected} aria-checked={isItemSelected}>
+                      <TableRow key={row._id} hover tabIndex={-1} role="checkbox" selected={isItemSelected} aria-checked={isItemSelected}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, row.name)} />
+                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, row.email)} />
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {row.name}
@@ -319,7 +358,7 @@ export default function User() {
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={data} />
+                        <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
                   </TableBody>

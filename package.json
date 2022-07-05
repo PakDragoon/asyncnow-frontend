@@ -53,6 +53,8 @@
         "react-scripts": "5.0.0",
         "react-select": "5.2.2",
         "react-sticky": "6.0.3",
+        "react-timer-hook": "^3.0.5",
+        "react-toastify": "^9.0.5",
         "react-video-recorder": "^3.19.2",
         "recoil": "0.6.1",
         "referral-codes": "2.0.1",

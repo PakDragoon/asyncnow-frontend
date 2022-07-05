@@ -4,6 +4,8 @@ import { useLocation } from "react-router-dom"
 import Overlay from "react-overlay-component"
 import { ReactMediaRecorder } from "react-media-recorder"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
+import { useStopwatch } from "react-timer-hook"
+import { Box, LinearProgress } from "@mui/material"
 
 import dashboardIcon from "../../assets/images/menu.png"
 import videosIcon from "../../assets/images/focus.png"
@@ -20,17 +22,21 @@ import "./countdown.style.css"
 import "../../assets/css/normalize.css"
 import "../../assets/css/asyncnow.webflow.css"
 import "../../assets/css/webflow.css"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { failedNotification } from "../../utils/notifications"
 
 const axios = require("axios")
 const siteUrl = process.env.REACT_APP_SITE_URL
 
 const renderTime = ({ remainingTime }) => {
   if (remainingTime === 0) {
-    return <div className="timer">Starting now</div>
+    return <div className="timer">Too lale...</div>
   }
+
   return (
     <div className="timer">
-      <div className="text">{`${remainingTime === 3 ? "Starting in ." : remainingTime === 2 ? "Starting in . ." : remainingTime === 1 ? "Starting in . . ." : ""}`}</div>
+      <div className="text">Starting in</div>
       <div className="value">{remainingTime}</div>
       <div className="text">seconds</div>
     </div>
@@ -56,8 +62,6 @@ function liveStream(stream) {
   const previewStream = stream
   if (previewStream != null) {
     return <VideoPreview stream={previewStream} />
-  } else {
-    return `Click 'Record Now' to start. Rremember you have 60 seconds. And don't forget to smile 😀`
   }
 }
 
@@ -65,16 +69,24 @@ function Dashboard(props) {
   PageTitle(props.title)
   const location = useLocation()
   const token = sessionStorage.getItem("token")
+  const descRef = useRef(null)
+  const ctaRef = useRef(null)
+  const fileRef = useRef(null)
   const [isOpen, setOverlay] = useState(false)
   const [isOpenUpload, setOverlayUpload] = useState(false)
   const [isOpenRecord, setOverlayRecord] = useState(false)
+  const [isStartRecord, setIsStartRecord] = useState(false)
+  const [isSubmitRecord, setIsSubmitRecord] = useState(false)
+  const [isReviewRecord, setIsReviewRecord] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [description, setDescription] = useState("")
   const [cta, setCTA] = useState("")
   const [fileData, setFileData] = useState()
   const [countdownStart, setCountdownStart] = useState(false)
-  const [record, setRecord] = useState(false)
-  const [previewV, setPreviewV] = useState(false)
-  const [saveV, setSaveV] = useState(false)
+  const [key, setKey] = useState(0)
+  const stopwatchOffset = new Date()
+  stopwatchOffset.setSeconds(stopwatchOffset.getSeconds())
+  const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false, offsetTimestamp: stopwatchOffset })
   const configs = {
     animate: true,
     clickDismiss: true,
@@ -83,6 +95,11 @@ function Dashboard(props) {
 
   const handleUploadVideo = async (event) => {
     event.preventDefault()
+    if (fileData.type !== "video/mp4") {
+      failedNotification("Only mp4 files are allowed!")
+      setFileData()
+      return
+    }
     const formData = new FormData()
     console.log("newFile fileData:", fileData)
     formData.append("video", fileData)
@@ -96,27 +113,29 @@ function Dashboard(props) {
       },
       data: formData,
     }
+    setIsLoading(true)
     axios(configFile)
       .then((res) => {
         console.log(res)
+        setIsLoading(false)
       })
       .catch((err) => {
         console.log(err)
       })
-    setOverlayUpload(false)
     setDescription("")
     setCTA("")
+    setFileData()
+    descRef.current.value = ""
+    ctaRef.current.value = ""
+    fileRef.current.value = ""
+    setOverlayUpload(false)
   }
   const handleSubmitVideo = async (url, event) => {
     event.preventDefault()
-    console.log("mediaurl:", url)
     const videoBlob = await fetch(url).then((e) => e.blob())
-    console.log("videoblob:", videoBlob)
     const newFile = blobToFile(videoBlob, "new-file.mp4")
-    console.log("newFile:", newFile)
     setFileData(newFile)
     const formData = new FormData()
-    console.log("newFile fileData:", fileData)
     formData.append("video", newFile)
     formData.append("description", description)
     formData.append("cta", cta)
@@ -128,19 +147,19 @@ function Dashboard(props) {
       },
       data: formData,
     }
+    setIsLoading(true)
     axios(configFile)
       .then((res) => {
         console.log(res)
+        setIsLoading(false)
       })
       .catch((err) => {
         console.log(err.res.data)
       })
-    setOverlayRecord(false)
-    setDescription("")
-    setCTA("")
-    setSaveV(false)
-    setPreviewV(false)
-    setRecord(false)
+      setDescription("")
+      setCTA("")
+      setFileData()
+      setIsSubmitRecord(false)
   }
 
   function blobToFile(theBlob, fileName) {
@@ -149,6 +168,12 @@ function Dashboard(props) {
 
   return (
     <>
+      {isLoading && (
+        <Box sx={{ width: "100%", zIndex: "1000" }}>
+          <LinearProgress />
+        </Box>
+      )}
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       <div data-animation="default" data-collapse="medium" data-duration={400} data-easing="ease" data-easing2="ease" role="banner" className="navbar-4 w-nav">
         <div className="container-8 w-container">
           <div className="div-block-59">
@@ -299,15 +324,15 @@ function Dashboard(props) {
                   <label htmlFor="Title" className="field-label">
                     VIDEO&nbsp;TITLE
                   </label>
-                  <input type="text" className="text-field w-input" onChange={(e) => setDescription(e.target.value)} maxLength={256} name="Title" data-name="Title" placeholder="Awesome video title!" id="Title" required />
+                  <input type="text" className="text-field w-input" ref={descRef} onChange={(e) => setDescription(e.target.value)} maxLength={256} name="Title" data-name="Title" placeholder="Awesome video title!" id="Title" required />
                   <label htmlFor="CTA" className="field-label">
                     CTA (OPTIONAL)
                   </label>
-                  <input type="text" className="text-field w-input" onChange={(e) => setCTA(e.target.value)} maxLength={256} name="CTA" data-name="CTA" placeholder="/@alovelace/save-10%" id="CTA" />
+                  <input type="text" className="text-field w-input" ref={ctaRef} onChange={(e) => setCTA(e.target.value)} maxLength={256} name="CTA" data-name="CTA" placeholder="/@alovelace/save-10%" id="CTA" />
                   <label htmlFor="CTA" className="field-label">
                     Upload File
                   </label>
-                  <input type="file" className="text-field w-input" onChange={(e) => setFileData(e.target.files[0])} name="video" data-name="video" placeholder="Choose File" id="video" />
+                  <input type="file" className="text-field w-input" ref={fileRef} onChange={(e) => setFileData(e.target.files[0])} name="video" data-name="video" placeholder="Choose File" id="video" accept="video/mp4" />
                   <div className="div-block-12 low">
                     <button type="submit" data-wait="Please wait..." className="submit-button w-button" onClick={handleUploadVideo}>
                       Save & Copy
@@ -317,10 +342,13 @@ function Dashboard(props) {
                       href="#"
                       className="link-7"
                       onClick={() => {
-                        setOverlayUpload(false)
                         setDescription("")
                         setCTA("")
                         setFileData()
+                        descRef.current.value = ""
+                        ctaRef.current.value = ""
+                        fileRef.current.value = ""
+                        setOverlayUpload(false)
                       }}
                     >
                       Cancel
@@ -331,116 +359,212 @@ function Dashboard(props) {
             </div>
           </div>
         </Overlay>
-        <Overlay configs={configs} isOpen={isOpenRecord}>
-          <ReactMediaRecorder
-            video
-            audio={true}
-            render={({ status, startRecording, stopRecording, mediaBlobUrl, previewStream }) => (
-              <div>
+        <ReactMediaRecorder
+          video
+          audio={true}
+          render={({ status, startRecording, stopRecording, mediaBlobUrl, previewStream }) => (
+            <>
+              <Overlay configs={configs} isOpen={isOpenRecord}>
                 <div style={{ opacity: "1" }} className="pup-up-modal">
-                  {!saveV ? (
-                    <div className="pop-up-modal-content video step-one">
-                      <div className="div-block-52">
-                        <h1 className="heading-4 video">
-                          {!previewV ? "Start recording" : "Review Video"}
-                          <span className="text-span-13" />
-                          <br />
-                        </h1>
-                        <div className="text-block-14">{!previewV ? "(1/3)" : "(2/3)"}</div>
-                      </div>
-                      <div className="div-block-50">{!previewV ? <div className="text-block-10 middle video">{liveStream(previewStream)}</div> : <video className="text-block-10 middle video" width="308" height="300" src={mediaBlobUrl} controls></video>}</div>
-                      <div className="div-block-2 hero video">
-                        {!record ? (
-                          <a
-                            href="#"
-                            className="button w-button"
-                            onClick={() => {
-                              startRecording()
-                              setRecord(true)
-                            }}
-                          >
-                            Record
-                          </a>
-                        ) : record && !previewV ? (
-                          <a
-                            href="#"
-                            className="button w-button"
-                            onClick={() => {
-                              stopRecording()
-                              setPreviewV(true)
-                            }}
-                          >
-                            Stop
-                          </a>
+                  <div className="pop-up-modal-content video step-one">
+                    <div className="div-block-52">
+                      <h1 className="heading-4 video">
+                        Start recording
+                        <span className="text-span-13" />
+                        <br />
+                      </h1>
+                      <div className="text-block-14">(1/3)</div>
+                    </div>
+                    <div className="div-block-50">
+                      <div className="text-block-10 middle video">
+                        {!countdownStart ? (
+                          `Click 'Record Now' to start. Rremember you have 60 seconds. And don't forget to smile 😀`
                         ) : (
-                          <a
-                            href="#"
-                            className="button w-button"
-                            onClick={() => {
-                              setSaveV(true)
+                          <CountdownCircleTimer
+                            key={key}
+                            isPlaying
+                            duration={10}
+                            colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
+                            onComplete={() => {
+                              setOverlayRecord(false)
+                              setCountdownStart(false)
+                              setIsStartRecord(true)
+                              startRecording()
+                              start()
                             }}
                           >
-                            Save
-                          </a>
+                            {renderTime}
+                          </CountdownCircleTimer>
                         )}
-                        <a
-                          data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
-                          href="#"
-                          className="link-7"
-                          onClick={() => {
-                            setOverlayRecord(false)
-                            stopRecording()
-                          }}
-                        >
-                          Cancel
-                        </a>
                       </div>
                     </div>
-                  ) : (
-                    <div style={{ opacity: "1" }} className="pop-up-modal-content video step-one">
-                      <div className="div-block-52">
-                        <h1 className="heading-4 video">
-                          Confirm details
-                          <span className="text-span-13" />
-                          <br />
-                        </h1>
-                        <div className="text-block-14">(3/3)</div>
-                      </div>
-                      <div className="form-block w-form">
-                        <form id="wf-form-Email-Form" name="wf-form-Email-Form" data-name="Email Form" encType="multipart/form-data" className="form join">
-                          <label htmlFor="Title" className="field-label">
-                            VIDEO&nbsp;TITLE
-                          </label>
-                          <input type="text" className="text-field w-input" onChange={(e) => setDescription(e.target.value)} maxLength={256} name="Title" data-name="Title" placeholder="Awesome video title!" id="Title" required />
-                          <label htmlFor="CTA" className="field-label">
-                            CTA (OPTIONAL)
-                          </label>
-                          <input type="text" className="text-field w-input" onChange={(e) => setCTA(e.target.value)} maxLength={256} name="CTA" data-name="CTA" placeholder="/@alovelace/save-10%" id="CTA" />
-                          <div className="div-block-12 low">
-                            <button type="submit" data-wait="Please wait..." className="submit-button w-button" onClick={(event) => handleSubmitVideo(mediaBlobUrl, event)}>
-                              Save & Copy
-                            </button>
-                            <a
-                              data-w-id="a2e8d7ad-6795-c789-6128-48db5d533307"
-                              href="#"
-                              className="link-7"
-                              onClick={() => {
-                                setOverlayRecord(false)
-                              }}
-                            >
-                              Cancel
-                            </a>
-                          </div>
-                        </form>
-                      </div>
+                    <div className="div-block-2 hero video">
+                      <a
+                        href="#"
+                        className="button w-button"
+                        onClick={() => {
+                          setCountdownStart(true)
+                          setKey((prevKey) => prevKey + 1)
+                        }}
+                      >
+                        Record
+                      </a>
+                      <a
+                        data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
+                        href="#"
+                        className="link-7"
+                        onClick={() => {
+                          stopRecording()
+                          setOverlayRecord(false)
+                          setCountdownStart(false)
+                        }}
+                      >
+                        Cancel
+                      </a>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <p>Status : {status}</p>
-              </div>
-            )}
-          />
-        </Overlay>
+              </Overlay>
+              <Overlay configs={configs} isOpen={isStartRecord}>
+                <div style={{ opacity: "1" }} className="pup-up-modal">
+                  <div className="pop-up-modal-content video step-one">
+                    <div className="div-block-52">
+                      <h1 className="heading-4 video">
+                        Start recording
+                        <span className="text-span-13" />
+                        <br />
+                      </h1>
+                      <div className="text-block-14">(1/3)</div>
+                    </div>
+                    <div className="div-block-50">
+                      <div className="text-block-10 middle video">{liveStream(previewStream)}</div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <p>Status : {status}</p>
+                      <div style={{ fontSize: "0.9rem" }}>
+                        <span>{minutes.toString().length < 2 ? `0${minutes}` : minutes}</span>:
+                        <span>
+                          {seconds.toString().length < 2 ? "0" : ""}
+                          {seconds}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="div-block-2 hero video">
+                      <a
+                        href="#"
+                        className="button w-button"
+                        onClick={() => {
+                          stopRecording()
+                          reset()
+                          setIsStartRecord(false)
+                          setIsReviewRecord(true)
+                        }}
+                      >
+                        Stop
+                      </a>
+                      <a
+                        data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
+                        href="#"
+                        className="link-7"
+                        onClick={() => {
+                          stopRecording()
+                          reset()
+                          setIsStartRecord(false)
+                        }}
+                      >
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </Overlay>
+              <Overlay configs={configs} isOpen={isReviewRecord}>
+                <div style={{ opacity: "1" }} className="pup-up-modal">
+                  <div className="pop-up-modal-content video step-one">
+                    <div className="div-block-52">
+                      <h1 className="heading-4 video">
+                        Review Video
+                        <span className="text-span-13" />
+                        <br />
+                      </h1>
+                      <div className="text-block-14">(2/3)</div>
+                    </div>
+                    <div className="div-block-50">
+                      <video className="text-block-10 middle video" width="308" height="300" src={mediaBlobUrl} controls></video>
+                    </div>
+                    <div className="div-block-2 hero video">
+                      <a
+                        href="#"
+                        className="button w-button"
+                        onClick={() => {
+                          setIsReviewRecord(false)
+                          setIsSubmitRecord(true)
+                        }}
+                      >
+                        Save
+                      </a>
+                      <a
+                        data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"
+                        href="#"
+                        className="link-7"
+                        onClick={() => {
+                          setIsReviewRecord(false)
+                          stopRecording()
+                        }}
+                      >
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </Overlay>
+              <Overlay configs={configs} isOpen={isSubmitRecord}>
+                <div style={{ opacity: "1" }} className="pup-up-modal">
+                  <div className="pop-up-modal-content video step-one">
+                    <div className="div-block-52">
+                      <h1 className="heading-4 video">
+                        Confirm details
+                        <span className="text-span-13" />
+                        <br />
+                      </h1>
+                      <div className="text-block-14">(3/3)</div>
+                    </div>
+                    <div className="form-block w-form">
+                      <form id="wf-form-Email-Form" name="wf-form-Email-Form" data-name="Email Form" encType="multipart/form-data" className="form join">
+                        <label htmlFor="Title" className="field-label">
+                          VIDEO&nbsp;TITLE
+                        </label>
+                        <input type="text" className="text-field w-input" onChange={(e) => setDescription(e.target.value)} maxLength={256} name="Title" data-name="Title" placeholder="Awesome video title!" id="Title" required />
+                        <label htmlFor="CTA" className="field-label">
+                          CTA (OPTIONAL)
+                        </label>
+                        <input type="text" className="text-field w-input" onChange={(e) => setCTA(e.target.value)} maxLength={256} name="CTA" data-name="CTA" placeholder="/@alovelace/save-10%" id="CTA" />
+                        <div className="div-block-12 low">
+                          <button type="submit" data-wait="Please wait..." className="submit-button w-button" onClick={(event) => handleSubmitVideo(mediaBlobUrl, event)}>
+                            Save & Copy
+                          </button>
+                          <a
+                            data-w-id="a2e8d7ad-6795-c789-6128-48db5d533307"
+                            href="#"
+                            className="link-7"
+                            onClick={() => {
+                              setDescription("")
+                              setCTA("")
+                              setFileData()
+                              setIsSubmitRecord(false)
+                            }}
+                          >
+                            Cancel
+                          </a>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </Overlay>
+            </>
+          )}
+        />
       </div>
     </>
   )

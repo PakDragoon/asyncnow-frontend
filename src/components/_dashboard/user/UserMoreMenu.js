@@ -45,9 +45,9 @@ const axios = require("axios")
 // ----------------------------------------------------------------------
 
 export default function UserMoreMenu(props) {
-  const { userRole } = useRecoilValue(userDataRecoil)
-  const isRole = userRole
-  // const isRole = sessionStorage.getItem("isRole")
+  // const { userRole } = useRecoilValue(userDataRecoil)
+  // const isRole = userRole
+  const isRole = sessionStorage.getItem("isRole")
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState(null)
   const handleOpen = () => setOpen(true)
