@@ -10,7 +10,6 @@ import Scrollbar from "../components/Scrollbar"
 import SearchNotFound from "../components/SearchNotFound"
 import { UserListHead, UserListToolbar, UserMoreMenu } from "../components/_dashboard/user"
 import "./User.style.css"
-import roundToNearestMinutes from "date-fns/roundToNearestMinutes"
 
 var referralCodes = require("referral-codes")
 const axios = require("axios")
@@ -18,7 +17,7 @@ const siteUrl = process.env.REACT_APP_SITE_URL
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: "name", label: "Name", alignRight: false }, { id: "email", label: "Email", alignRight: false }, { id: "company", label: "Company", alignRight: false }, { id: "role", label: "Role", alignRight: false }, { id: "status", label: "Status", alignRight: false }, { id: "" }]
+const TABLE_HEAD = [{ id: "i", label: "Sr.", alignRight: false }, { id: "name", label: "Name", alignRight: false }, { id: "email", label: "Email", alignRight: false }, { id: "company", label: "Company", alignRight: false }, { id: "role", label: "Role", alignRight: false }, { id: "status", label: "Status", alignRight: false }, { id: "" }]
 const style = {
   position: "absolute",
   top: "50%",
@@ -78,6 +77,7 @@ export default function User() {
   const [newEmail, setNewEmail] = useState("")
   const [newCompany, setNewCompany] = useState("")
   const [newPassword, setNewPassword] = useState("")
+
   const [page, setPage] = useState(0)
   const [open, setOpen] = useState(false)
   const [order, setOrder] = useState("asc")
@@ -88,10 +88,12 @@ export default function User() {
   const [deleteSuccess, setDeleteSuccess] = useState(false)
   const [createSuccess, setCreateSuccess] = useState(false)
   const [isFail, setIsFail] = useState(false)
-  const [isValidEmail, setIsValidEmail] = useState(false)
   const [nameError, setNameError] = useState(false)
-  const [passStatusOne, setPassStatusOne] = useState(true)
-  const [passStatusTwo, setPassStatusTwo] = useState(true)
+  const [emailError, setEmailError] = useState(false)
+  const [companyError, setCompanyError] = useState(false)
+  const [passStatusOne, setPassStatusOne] = useState(false)
+  const [passStatusTwo, setPassStatusTwo] = useState(false)
+  const [emptyFields, setEmptyFields] = useState(false)
   const [data, setData] = useState([])
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -129,10 +131,32 @@ export default function User() {
 
   const handleNewSubmit = async (event) => {
     event.preventDefault()
-    const nameValidation = new RegExp(/^[A-Za-z]+$/).test(newName)
-    if (!nameValidation) {
+    const nameValidation = new RegExp(/^[A-Za-z ]+$/).test(newName)
+    const emailValidation = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).test(newEmail)
+    const companyValidation = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/).test(newCompany)
+    if (newName && !nameValidation) {
       setNameError(true)
-      setTimeout(() => setNameError(false), 3000)
+      setTimeout(() => setNameError(false), 4000)
+      return
+    } else if (newEmail && !emailValidation) {
+      setEmailError(true)
+      setTimeout(() => setEmailError(false), 4000)
+      return
+    } else if (newCompany && companyValidation) {
+      setCompanyError(true)
+      setTimeout(() => setCompanyError(false), 4000)
+      return
+    } else if (newPassword && newPassword === "password") {
+      setPassStatusTwo(true)
+      setTimeout(() => setPassStatusTwo(false), 4000)
+      return
+    } else if (newPassword && newPassword.length < 7) {
+      setPassStatusOne(true)
+      setTimeout(() => setPassStatusOne(false), 4000)
+      return
+    } else if ([newName, newEmail, newCompany, newPassword, newRole].includes("") || [newName, newEmail, newCompany, newPassword, newRole].includes(null)) {
+      setEmptyFields(true)
+      setTimeout(() => setEmptyFields(false), 4000)
       return
     }
     const codeObj = referralCodes.generate({
@@ -161,16 +185,6 @@ export default function User() {
     })
       .then((res) => {
         console.log(res)
-        setIsValidEmail(false)
-        setIsFail(false)
-        setCreateSuccess(false)
-        setPassStatusOne(true)
-        setPassStatusTwo(true)
-        setNewName("")
-        setNewEmail("")
-        setNewCompany("")
-        setNewPassword("")
-        setNewRole("")
         setCreateSuccess(true)
         setTimeout(() => {
           setCreateSuccess(false)
@@ -179,32 +193,9 @@ export default function User() {
       })
       .catch((err) => {
         console.log(err.response.data)
-        const emailValid = new RegExp(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,15}/g).test(email)
-        if (!emailValid) {
-          setIsValidEmail(true)
-          setIsFail(false)
-          setCreateSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(true)
-        } else if (password === "password") {
-          setIsValidEmail(false)
-          setIsFail(false)
-          setCreateSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(false)
-        } else if (password.length < 7) {
-          setIsValidEmail(false)
-          setIsFail(false)
-          setCreateSuccess(false)
-          setPassStatusOne(false)
-          setPassStatusTwo(true)
-        } else {
-          setIsValidEmail(false)
-          setIsFail(true)
-          setCreateSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(true)
-        }
+        setIsFail(true)
+        setTimeout(() => setIsFail(false), 4000)
+
       })
     setNewName("")
     setNewEmail("")
@@ -302,17 +293,23 @@ export default function User() {
               <div className={`${nameError ? "w-form-fail" : "none"}`}>
                 <div>Name must be consist of alphabets only.</div>
               </div>
+              <div className={`${companyError ? "w-form-fail" : "none"}`}>
+                <div>Company name should not contain special characters.</div>
+              </div>
               <div className={`${isFail ? "w-form-fail" : "none"}`}>
                 <div>This email has already registered.</div>
               </div>
-              <div className={`${isValidEmail ? "w-form-fail" : "none"}`}>
+              <div className={`${emailError ? "w-form-fail" : "none"}`}>
                 <div>This email is not valid.</div>
               </div>
-              <div className={`${passStatusOne ? "none" : "w-form-fail"}`}>
+              <div className={`${passStatusOne ? "w-form-fail" : "none"}`}>
                 <div>Password should not be less then 7 characters.</div>
               </div>
-              <div className={`${passStatusTwo ? "none" : "w-form-fail"}`}>
+              <div className={`${passStatusTwo ? "w-form-fail" : "none"}`}>
                 <div>Password can't be 'password'.</div>
+              </div>
+              <div className={`${emptyFields ? "w-form-fail" : "none"}`}>
+                <div>Invalid or empty fields.</div>
               </div>
             </Box>
           </Modal>
@@ -324,12 +321,13 @@ export default function User() {
               <Table>
                 <UserListHead order={order} orderBy={orderBy} headLabel={TABLE_HEAD} rowCount={data.length} numSelected={selected.length} onRequestSort={handleRequestSort} onSelectAllClick={handleSelectAllClick} />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, i) => {
                     const isItemSelected = selected.indexOf(row.email) !== -1
                     return (
                       <TableRow key={row._id} hover tabIndex={-1} role="checkbox" selected={isItemSelected} aria-checked={isItemSelected}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, row.email)} />
+                        <TableCell padding="checkbox" style={{textAlign:'center'}}>
+                          {/* <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, row.email)} /> */}
+                          {i + 1}
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {row.name}

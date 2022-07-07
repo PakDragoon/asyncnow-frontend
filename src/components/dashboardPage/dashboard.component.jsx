@@ -86,7 +86,7 @@ function Dashboard(props) {
   const [key, setKey] = useState(0)
   const stopwatchOffset = new Date()
   stopwatchOffset.setSeconds(stopwatchOffset.getSeconds())
-  const { seconds, minutes, start, reset } = useStopwatch({ autoStart: false, offsetTimestamp: stopwatchOffset })
+  const { seconds, minutes, start, reset, pause } = useStopwatch({ autoStart: false, offsetTimestamp: stopwatchOffset })
   const configs = {
     animate: true,
     clickDismiss: true,
@@ -156,10 +156,10 @@ function Dashboard(props) {
       .catch((err) => {
         console.log(err.res.data)
       })
-      setDescription("")
-      setCTA("")
-      setFileData()
-      setIsSubmitRecord(false)
+    setDescription("")
+    setCTA("")
+    setFileData()
+    setIsSubmitRecord(false)
   }
 
   function blobToFile(theBlob, fileName) {
@@ -383,7 +383,7 @@ function Dashboard(props) {
                           <CountdownCircleTimer
                             key={key}
                             isPlaying
-                            duration={10}
+                            duration={5}
                             colors={[["#004777", 0.33], ["#F7B801", 0.33], ["#A30000"]]}
                             onComplete={() => {
                               setOverlayRecord(false)
@@ -405,6 +405,7 @@ function Dashboard(props) {
                         onClick={() => {
                           setCountdownStart(true)
                           setKey((prevKey) => prevKey + 1)
+                          reset()
                         }}
                       >
                         Record
@@ -450,6 +451,7 @@ function Dashboard(props) {
                       </div>
                     </div>
                     <div className="div-block-2 hero video">
+                      {minutes > 0 ? (stopRecording(), pause()) : ""}
                       <a
                         href="#"
                         className="button w-button"
@@ -460,7 +462,7 @@ function Dashboard(props) {
                           setIsReviewRecord(true)
                         }}
                       >
-                        Stop
+                        {minutes > 0 ? "Review" : "Stop"}
                       </a>
                       <a
                         data-w-id="a2e8d7ad-6795-c789-6128-48db5d5332da"

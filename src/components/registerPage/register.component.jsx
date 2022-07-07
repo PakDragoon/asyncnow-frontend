@@ -20,12 +20,43 @@ function Register() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [fail, setFail] = useState(false)
-  const [isValidEmail, setIsValidEmail] = useState(false)
-  const [passStatusOne, setPassStatusOne] = useState(true)
-  const [passStatusTwo, setPassStatusTwo] = useState(true)
+  const [nameError, setNameError] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const [companyError, setCompanyError] = useState(false)
+  const [passStatusOne, setPassStatusOne] = useState(false)
+  const [passStatusTwo, setPassStatusTwo] = useState(false)
+  const [emptyFields, setEmptyFields] = useState(false)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    const nameValidation = new RegExp(/^[A-Za-z ]+$/).test(name)
+    const emailValidation = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).test(email)
+    const companyValidation = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/).test(company)
+    if (name && !nameValidation) {
+      setNameError(true)
+      setTimeout(() => setNameError(false), 4000)
+      return
+    } else if (email && !emailValidation) {
+      setEmailError(true)
+      setTimeout(() => setEmailError(false), 4000)
+      return
+    } else if (company && companyValidation) {
+      setCompanyError(true)
+      setTimeout(() => setCompanyError(false), 4000)
+      return
+    } else if (password && password === "password") {
+      setPassStatusTwo(true)
+      setTimeout(() => setPassStatusTwo(false), 4000)
+      return
+    } else if (password && password.length < 7) {
+      setPassStatusOne(true)
+      setTimeout(() => setPassStatusOne(false), 4000)
+      return
+    } else if ([name, email, company, password].includes("") || [name, email, company, password].includes(null)) {
+      setEmptyFields(true)
+      setTimeout(() => setEmptyFields(false), 4000)
+      return
+    }
     const codeObj = referralCodes.generate({
       count: 1,
       length: 6,
@@ -47,50 +78,18 @@ function Register() {
     })
       .then((res) => {
         console.log(res)
-        setName("")
-        setEmail("")
-        setCompany("")
-        setPassword("")
         setLoading(false)
-        setFail(false)
         setSuccess(true)
-        setPassStatusOne(true)
-        setPassStatusTwo(true)
         navigate("/thanks", { replace: true })
       })
       .catch((err) => {
         console.log("error", err.data)
-        const emailValid = new RegExp(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,15}/g).test(email)
-        if (!emailValid) {
-          setIsValidEmail(true)
-          setLoading(false)
-          setFail(false)
-          setSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(true)
-        } else if (password === "password") {
-          setIsValidEmail(false)
-          setLoading(false)
-          setFail(false)
-          setSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(false)
-        } else if (password.length < 7) {
-          setIsValidEmail(false)
-          setLoading(false)
-          setFail(false)
-          setSuccess(false)
-          setPassStatusOne(false)
-          setPassStatusTwo(true)
-        } else {
-          setIsValidEmail(false)
-          setLoading(false)
-          setFail(true)
-          setSuccess(false)
-          setPassStatusOne(true)
-          setPassStatusTwo(true)
-        }
+        setFail(true)
       })
+      setName("")
+      setEmail("")
+      setCompany("")
+      setPassword("")
   }
   function showMsg() {
     if (loading) {
@@ -113,19 +112,19 @@ function Register() {
                   <label htmlFor="Name" className="field-label">
                     FULL NAME
                   </label>
-                  <input onChange={(e) => setName(e.target.value)} type="text" className="text-field w-input" maxLength="256" name="name" data-name="name" placeholder="Ada Lovelace" id="name" required />
+                  <input onChange={(e) => setName(e.target.value)} type="text" className="text-field w-input" maxLength="256" name="name" data-name="name" placeholder="Ada Lovelace" id="name" />
                   <label htmlFor="Email-2" className="field-label">
                     WORK EMAIL
                   </label>
-                  <input onChange={(e) => setEmail(e.target.value)} type="email" className="text-field w-input" maxLength="256" name="email" data-name="email" placeholder="a.lovelace@google.com" id="email" required />
+                  <input onChange={(e) => setEmail(e.target.value)} type="email" className="text-field w-input" maxLength="256" name="email" data-name="email" placeholder="a.lovelace@google.com" id="email" />
                   <label htmlFor="Name-2" className="field-label">
                     COMPANY NAME
                   </label>
-                  <input onChange={(e) => setCompany(e.target.value)} type="text" className="text-field w-input" maxLength="256" name="company" data-name="name" placeholder="Google Inc." id="company" required />
+                  <input onChange={(e) => setCompany(e.target.value)} type="text" className="text-field w-input" maxLength="256" name="company" data-name="name" placeholder="Google Inc." id="company" />
                   <label htmlFor="Password" className="field-label">
                     PASSWORD
                   </label>
-                  <input onChange={(e) => setPassword(e.target.value)} type="password" className="text-field w-input" maxLength="256" name="password" data-name="password" placeholder="***********" id="password" required />
+                  <input onChange={(e) => setPassword(e.target.value)} type="password" className="text-field w-input" maxLength="256" name="password" data-name="password" placeholder="***********" id="password" />
                   <input type="submit" className="button w-button" value="Register Now →" />
                 </form>
                 {showMsg()}
@@ -135,14 +134,23 @@ function Register() {
                 <div className={`${fail ? "w-form-fail" : "w-condition-invisible"}`}>
                   <div>This email has already registered.</div>
                 </div>
-                <div className={`${isValidEmail ? "w-form-fail" : "w-condition-invisible"}`}>
-                  <div>This email is not valid.</div>
-                </div>
-                <div className={`${passStatusOne ? "w-condition-invisible" : "w-form-fail"}`}>
+                <div className={`${passStatusOne ? "w-form-fail" : "w-condition-invisible"}`}>
                   <div>Password should not be less then 7 characters.</div>
                 </div>
-                <div className={`${passStatusTwo ? "w-condition-invisible" : "w-form-fail"}`}>
+                <div className={`${passStatusTwo ? "w-form-fail" : "w-condition-invisible"}`}>
                   <div>Password can't be 'password'.</div>
+                </div>
+                <div className={`${nameError ? "w-form-fail" : "w-condition-invisible"}`}>
+                  <div>Name must be consist of alphabets only.</div>
+                </div>
+                <div className={`${companyError ? "w-form-fail" : "w-condition-invisible"}`}>
+                  <div>Company name should not contain special characters.</div>
+                </div>
+                <div className={`${emailError ? "w-form-fail" : "w-condition-invisible"}`}>
+                  <div>This email is not valid.</div>
+                </div>
+                <div className={`${emptyFields ? "w-form-fail" : "w-condition-invisible"}`}>
+                  <div>Invalid or empty fields.</div>
                 </div>
               </div>
             </div>

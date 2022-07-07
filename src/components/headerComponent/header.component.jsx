@@ -80,7 +80,7 @@ function Header() {
       <div data-collapse="medium" data-animation="default" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className={`w-nav ${location.pathname.match(/^.*dashboard.*$/) ? "navbbar-app" : "navbar"} ${location.pathname === "/checkout" || location.pathname === "/paypal" || location.pathname === "/order" || location.pathname === "/protected" || location.pathname === "/error" || location.pathname === "/dashboard/app" || location.pathname === "/dashboard/user" ? "none" : ""}`}>
         <div className={`w-container ${location.pathname.match(/^.*dashboard.*$/) ? "container-4" : "nav-container"}`}>
           <Link to="/" aria-current="page" className="brand w-nav-brand w--current">
-            <div className={`brand-logo ${location.pathname.match(/^.*dashboard.*$/) ? "app" : ""} ${location.pathname === "/dashboard/app" && !location.pathname === "/dashboard/user" ? "none" : ""}`}>
+            <div className={`brand-logo ${location.pathname.match(/^.*dashboard.*$/) ? "app" : ""} ${location.pathname === "/dashboardadmin/user" ? "none" : ""}`}>
               async<span className="text-span">.</span>
             </div>
           </Link>
@@ -131,7 +131,7 @@ function Header() {
               <Link to={isAuthenticated ? '/dashboarduser/videos' : '/'} class="nav-link-3 b-nav-link">
                 &#8592;{isAuthenticated ? ' Back to videos' : ' Back to Home'}
               </Link>
-            ) : location.pathname.match(/^.*dashboard.*$/) && location.pathname !== "/dashboard/user" ? (
+            ) : location.pathname.match(/^.*dashboard.*$/) && location.pathname !== "/dashboardadmin/user" ? (
               <Link to="/" onClick={Logout} className="nav-link-3 b-nav-link">
                 Sign Out
               </Link>
