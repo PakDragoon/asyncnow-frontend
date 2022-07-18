@@ -69,6 +69,8 @@ function Dashboard(props) {
   PageTitle(props.title)
   const location = useLocation()
   const token = sessionStorage.getItem("token")
+  const [count, setCount] = useState(0)
+  const [uploadPercent, setUploadPercent] = useState(0)
   const descRef = useRef(null)
   const ctaRef = useRef(null)
   const fileRef = useRef(null)
@@ -105,6 +107,7 @@ function Dashboard(props) {
     formData.append("video", fileData)
     formData.append("description", description)
     formData.append("cta", cta)
+
     var configFile = {
       method: "post",
       url: `${siteUrl}/upload/video`,
@@ -112,12 +115,21 @@ function Dashboard(props) {
         Authorization: `Bearer ${token}`,
       },
       data: formData,
+      onUploadProgress: (progressEvent) => {
+        const {loaded, total} = progressEvent;
+        let percent = Math.floor( (loaded * 100) / total )
+        console.log( `${loaded}kb of ${total}kb | ${percent}%` );
+        if( percent < 100 ){
+          setUploadPercent(percent)
+        }
+      }
     }
     setIsLoading(true)
     axios(configFile)
       .then((res) => {
         console.log(res)
         setIsLoading(false)
+        setCount(count + 1)
       })
       .catch((err) => {
         console.log(err)
@@ -152,6 +164,7 @@ function Dashboard(props) {
       .then((res) => {
         console.log(res)
         setIsLoading(false)
+        setCount(count + 1)
       })
       .catch((err) => {
         console.log(err.res.data)
@@ -233,6 +246,7 @@ function Dashboard(props) {
               <Link to="settings" className="link-block-2 end w-inline-block">
                 <img src={settingsIcon} loading="lazy" sizes="(max-width: 479px) 100vw, 40px" alt="" />
               </Link>
+              {uploadPercent && uploadPercent}%
             </div>
             <div className="div-block-40">
               <div className="text-block-10">Create a new video</div>
@@ -248,7 +262,7 @@ function Dashboard(props) {
               </a>
             </div>
           </div>
-          {location.pathname === "/dashboarduser/main" ? <DashboardMain /> : location.pathname === "/dashboarduser/videos" ? <DashboardVideos /> : location.pathname === "/dashboarduser/insights" ? <DashboardInsights /> : location.pathname === "/dashboarduser/settings" ? <DashboardSettings /> : <DashboardMain />}
+          {location.pathname === "/dashboarduser/main" ? <DashboardMain /> : location.pathname === "/dashboarduser/videos" ? <DashboardVideos refresh={count} /> : location.pathname === "/dashboarduser/insights" ? <DashboardInsights /> : location.pathname === "/dashboarduser/settings" ? <DashboardSettings /> : <DashboardMain />}
         </div>
       </div>
       <div>

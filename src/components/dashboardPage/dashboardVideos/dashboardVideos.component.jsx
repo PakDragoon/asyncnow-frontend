@@ -18,9 +18,9 @@ const axios = require("axios")
 const title = "Dashbaord | Videos"
 const siteUrl = process.env.REACT_APP_SITE_URL
 
-function DashboardVideos() {
+function DashboardVideos(props) {
   const [data, setData] = useState([])
-  const token = sessionStorage.getItem("token")
+  const token = sessionStorage.getItem("token")    
   useEffect(() => {
     var config = {
       method: "get",
@@ -36,7 +36,7 @@ function DashboardVideos() {
       .catch((error) => {
         console.log(error)
       })
-  }, [data])
+  }, [props.refresh])
 
   function handleDeleteVideo(taskId, taskLink) {
     var configS3 = {
