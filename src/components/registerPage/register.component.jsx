@@ -5,6 +5,9 @@ import "../../assets/css/normalize.css"
 import "../../assets/css/asyncnow.webflow.css"
 import "../../assets/css/webflow.css"
 import { set, stubFalse } from "lodash"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { failedNotification } from "../../utils/notifications"
 
 const axios = require("axios")
 const title = "Register"
@@ -30,7 +33,7 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     const nameValidation = new RegExp(/^[A-Za-z ]+$/).test(name)
-    const emailValidation = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).test(email)
+    const emailValidation = new RegExp(/^([a-zA-Z0-9_\.]+)@([a-zA-Z0-9_\.]+)\.([a-zA-Z]{2,5})$/).test(email)
     const companyValidation = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/).test(company)
     if (name && !nameValidation) {
       setNameError(true)
@@ -101,6 +104,7 @@ function Register() {
       <Helmet>
         <title>{title}</title>
       </Helmet>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       <div className="section-white wf-section">
         <div className="hero-container fixed w-container">
           <div className="w-row">

@@ -20,7 +20,8 @@ const siteUrl = process.env.REACT_APP_SITE_URL
 
 function DashboardVideos(props) {
   const [data, setData] = useState([])
-  const token = sessionStorage.getItem("token")    
+  const [update, setUpdate] = useState(0)
+  const token = sessionStorage.getItem("token")
   useEffect(() => {
     var config = {
       method: "get",
@@ -36,7 +37,7 @@ function DashboardVideos(props) {
       .catch((error) => {
         console.log(error)
       })
-  }, [props.refresh])
+  }, [props.refresh, update])
 
   function handleDeleteVideo(taskId, taskLink) {
     var configS3 = {
@@ -63,6 +64,7 @@ function DashboardVideos(props) {
             axios(config)
               .then((res) => {
                 console.log("Result:", res)
+                setUpdate(update + 1)
               })
               .catch((error) => {
                 console.log(error)
@@ -113,10 +115,7 @@ function DashboardVideos(props) {
                 </div>
               </div>
               <div className="div-block-47">
-                <Link
-                  to={`/awesome/${row.link}`}
-                  className="link-11"
-                >
+                <Link to={`/awesome/${row.link}`} className="link-11">
                   Watch
                 </Link>
                 <div className="div-block-48">
@@ -128,7 +127,15 @@ function DashboardVideos(props) {
                 <div className="div-block-48">
                   <div className="text-block-10">|</div>
                 </div>
-                <a href="#" data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8" className="link-11" onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/awesome/${row.link}`);successNotification("Link Copied!")}}>
+                <a
+                  href="#"
+                  data-w-id="d171a671-d3c3-ae8d-71c8-7575c94780d8"
+                  className="link-11"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`http://localhost:3000/awesome/${row.link}`)
+                    successNotification("Link Copied!")
+                  }}
+                >
                   Copy Link
                 </a>
               </div>

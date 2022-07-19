@@ -132,7 +132,7 @@ export default function User() {
   const handleNewSubmit = async (event) => {
     event.preventDefault()
     const nameValidation = new RegExp(/^[A-Za-z ]+$/).test(newName)
-    const emailValidation = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).test(newEmail)
+    const emailValidation = new RegExp(/^([a-zA-Z0-9_\.]+)@([a-zA-Z0-9_\.]+)\.([a-zA-Z]{2,5})$/).test(newEmail)
     const companyValidation = new RegExp(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/).test(newCompany)
     if (newName && !nameValidation) {
       setNameError(true)
@@ -195,7 +195,6 @@ export default function User() {
         console.log(err.response.data)
         setIsFail(true)
         setTimeout(() => setIsFail(false), 4000)
-
       })
     setNewName("")
     setNewEmail("")
@@ -325,7 +324,7 @@ export default function User() {
                     const isItemSelected = selected.indexOf(row.email) !== -1
                     return (
                       <TableRow key={row._id} hover tabIndex={-1} role="checkbox" selected={isItemSelected} aria-checked={isItemSelected}>
-                        <TableCell padding="checkbox" style={{textAlign:'center'}}>
+                        <TableCell padding="checkbox" style={{ textAlign: "center" }}>
                           {/* <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, row.email)} /> */}
                           {i + 1}
                         </TableCell>

@@ -6,6 +6,8 @@ import { ReactMediaRecorder } from "react-media-recorder"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import { useStopwatch } from "react-timer-hook"
 import { Box, LinearProgress } from "@mui/material"
+import { CircularProgressbar } from "react-circular-progressbar"
+import "react-circular-progressbar/dist/styles.css"
 
 import dashboardIcon from "../../assets/images/menu.png"
 import videosIcon from "../../assets/images/focus.png"
@@ -71,11 +73,13 @@ function Dashboard(props) {
   const token = sessionStorage.getItem("token")
   const [count, setCount] = useState(0)
   const [uploadPercent, setUploadPercent] = useState(0)
+  const [progress, setProgress] = useState("")
   const descRef = useRef(null)
   const ctaRef = useRef(null)
   const fileRef = useRef(null)
   const [isOpen, setOverlay] = useState(false)
   const [isOpenUpload, setOverlayUpload] = useState(false)
+  const [isUploadProgress, setIsUploadProgress] = useState(false)
   const [isOpenRecord, setOverlayRecord] = useState(false)
   const [isStartRecord, setIsStartRecord] = useState(false)
   const [isSubmitRecord, setIsSubmitRecord] = useState(false)
@@ -102,6 +106,8 @@ function Dashboard(props) {
       setFileData()
       return
     }
+    setOverlayUpload(false)
+    setIsUploadProgress(true)
     const formData = new FormData()
     console.log("newFile fileData:", fileData)
     formData.append("video", fileData)
@@ -116,19 +122,24 @@ function Dashboard(props) {
       },
       data: formData,
       onUploadProgress: (progressEvent) => {
-        const {loaded, total} = progressEvent;
-        let percent = Math.floor( (loaded * 100) / total )
-        console.log( `${loaded}kb of ${total}kb | ${percent}%` );
-        if( percent < 100 ){
+        const { loaded, total } = progressEvent
+        let percent = Math.floor((loaded / total) * 100)
+        setProgress(`${loaded} of ${total} | ${percent}%`)
+        console.log(`${loaded} of ${total} | ${percent}%`)
+        if (percent < 100) {
           setUploadPercent(percent)
         }
-      }
+      },
     }
     setIsLoading(true)
     axios(configFile)
       .then((res) => {
         console.log(res)
         setIsLoading(false)
+        setUploadPercent(100)
+        setTimeout(() => {
+          setIsUploadProgress(false)
+        }, 3000)
         setCount(count + 1)
       })
       .catch((err) => {
@@ -140,7 +151,6 @@ function Dashboard(props) {
     descRef.current.value = ""
     ctaRef.current.value = ""
     fileRef.current.value = ""
-    setOverlayUpload(false)
   }
   const handleSubmitVideo = async (url, event) => {
     event.preventDefault()
@@ -246,7 +256,6 @@ function Dashboard(props) {
               <Link to="settings" className="link-block-2 end w-inline-block">
                 <img src={settingsIcon} loading="lazy" sizes="(max-width: 479px) 100vw, 40px" alt="" />
               </Link>
-              {uploadPercent && uploadPercent}%
             </div>
             <div className="div-block-40">
               <div className="text-block-10">Create a new video</div>
@@ -369,6 +378,40 @@ function Dashboard(props) {
                     </a>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </Overlay>
+        <Overlay configs={configs} isOpen={isUploadProgress}>
+          <div style={{ opacity: "1" }} className="pup-up-modal">
+            <div className="pop-up-modal-content video step-one" style={{ maxHeight: "395px" }}>
+              <div className="div-block-52">
+                <h1 className="heading-4 video">
+                  Uploading
+                  <span className="text-span-13" />
+                  <br />
+                </h1>
+                <div className="text-block-14">(3/3)</div>
+              </div>
+              <div className="div-block-50">
+                <div className="text-block-10 middle video" style={{ padding: "1rem" }}>
+                  <CircularProgressbar
+                    value={uploadPercent}
+                    text={`${uploadPercent}%`}
+                    strokeWidth="6"
+                    styles={{
+                      path: {
+                        stroke: `rgba(69, 74, 222, ${uploadPercent / 100})`,
+                        strokeLinecap: "butt",
+                        transition: "stroke-dashoffset 0.5s ease 0s",
+                      },
+                      text: {
+                        fill: "#454ade",
+                        fontSize: "16px",
+                      },
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>

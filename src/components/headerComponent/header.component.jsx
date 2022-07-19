@@ -93,7 +93,7 @@ function Header() {
               <Link to="/" className="nav-link login w-nav-link">
                 Home
               </Link>
-            ) : location.pathname === "/" && isAuthenticated ? (
+            ) : location.pathname === "/" && isAuthenticated === "true" ? (
               <a href="#" onClick={Logout} className="nav-link login w-nav-link">
                 Logout
               </a>
@@ -111,7 +111,7 @@ function Header() {
               >
                 Join for FREE →
               </a>
-            ) : location.pathname === "/" && isAuthenticated ? (
+            ) : location.pathname === "/" && isAuthenticated === "true" ? (
               <Link to={`${isRole === "Admin" || isRole === "Super Admin" ? "/dashboardadmin/user" : "/dashboarduser/main"}`} data-w-id="3c79f708-d66c-1e9b-7848-197101407da7" className="nav-link w-nav-link">
                 Dashboard →
               </Link>
@@ -127,9 +127,9 @@ function Header() {
               <Link to="/login" data-w-id="3c79f708-d66c-1e9b-7848-197101407da7" className="nav-link w-nav-link">
                 Back to Login →
               </Link>
-            ) : location.pathname.match(/^.*awesome.*$/) ? ( 
-              <Link to={isAuthenticated ? '/dashboarduser/videos' : '/'} class="nav-link-3 b-nav-link">
-                &#8592;{isAuthenticated ? ' Back to videos' : ' Back to Home'}
+            ) : location.pathname.match(/^.*awesome.*$/) ? (
+              <Link to={isAuthenticated === 'true' ? "/dashboarduser/videos" : "/"} class="nav-link-3 b-nav-link">
+                &#8592;{isAuthenticated === 'true' ? " Back to videos" : " Back to Home"}
               </Link>
             ) : location.pathname.match(/^.*dashboard.*$/) && location.pathname !== "/dashboardadmin/user" ? (
               <Link to="/" onClick={Logout} className="nav-link-3 b-nav-link">
